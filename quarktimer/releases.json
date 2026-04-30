@@ -1,1 +1,10 @@
-[]
+[
+    {
+        "version": "v1.0.0",
+        "published_at": "2026-04-30",
+        "notes_url": "",
+        "notes_md_url": "",
+        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/quarktimer-v1.0.0/QuarkTimer.exe",
+        "sha256": "77acf26611339ac8d158ab58cb275d3a18b4d0e87c29bb83696238535971fbd7"
+    }
+]
