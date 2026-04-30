@@ -303,7 +303,7 @@
         let count = 0;
         for (const a of assets) {
           const name = String(a.name || '');
-          if (name.toLowerCase() === 'calendarjp.exe') count += Number(a.download_count || 0);
+          if (name.toLowerCase() === 'calendarjp.zip') count += Number(a.download_count || 0);
         }
         result[tag] = count;
       }
