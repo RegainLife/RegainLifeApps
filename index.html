@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RegainLife Apps</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121a2e;
+      --fg: #dbe6ff;
+      --muted: #99a8c6;
+      --line: #283555;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 16px 64px;
+    }
+    .site-header {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 24px 24px 20px;
+      margin-bottom: 28px;
+    }
+    .site-title {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 0.3px;
+    }
+    .site-sub {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .app-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      text-decoration: none;
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .app-card:hover {
+      background: #162040;
+    }
+    .app-card:hover .app-icon-wrap {
+      box-shadow: 0 0 0 2px var(--app-accent);
+    }
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .app-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex: 0 0 auto;
+      background: #1a2540;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow 0.15s;
+    }
+    .app-icon-wrap img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+    .app-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .app-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 2px;
+      background: color-mix(in srgb, var(--app-accent) 18%, transparent);
+      color: var(--app-accent);
+      border: 1px solid color-mix(in srgb, var(--app-accent) 35%, transparent);
+    }
+    .app-desc {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      margin: 0;
+      flex: 1;
+    }
+    .app-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .app-link-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--app-accent);
+    }
+    .app-arrow {
+      font-size: 16px;
+      color: var(--app-accent);
+      transition: transform 0.15s;
+    }
+    .app-card:hover .app-arrow {
+      transform: translateX(4px);
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 12px 2px;
+    }
+    @media (max-width: 600px) {
+      .site-title { font-size: 24px; }
+      .app-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="site-header">
+      <h1 class="site-title">RegainLife Apps</h1>
+      <p class="site-sub">Windows 向けデスクトップアプリの公開ページです。</p>
+    </header>
+
+    <p class="section-label">公開アプリ</p>
+    <div class="app-grid">
+
+      <a class="app-card" href="https://regainlife.github.io/FastMirror-Release/" style="--app-accent: #00d2ff;">
+        <div class="app-header">
+          <div class="app-icon-wrap">
+            <img src="https://regainlife.github.io/FastMirror-Release/favicon.ico" alt="FastMirror icon" onerror="this.style.display='none'" />
+          </div>
+          <div>
+            <p class="app-name">Fast Mirror</p>
+            <span class="app-tag">フォルダ同期</span>
+          </div>
+        </div>
+        <p class="app-desc">
+          Windows 向けフォルダ同期アプリ。同期元の変更を監視して同期先へ自動反映。<br>
+          インストール不要・軽量（約 10 MB）。Google Drive / GWS 最適化に対応。
+        </p>
+        <div class="app-footer">
+          <span class="app-link-label">リリースページへ</span>
+          <span class="app-arrow">&#8594;</span>
+        </div>
+      </a>
+
+      <a class="app-card" href="./quarktimer/" style="--app-accent: #ff8c00;">
+        <div class="app-header">
+          <div class="app-icon-wrap">
+            <img src="./quarktimer/favicon.ico" alt="QuarkTimer icon" onerror="this.style.display='none'" />
+          </div>
+          <div>
+            <p class="app-name">Quark Timer</p>
+            <span class="app-tag">タイマー</span>
+          </div>
+        </div>
+        <p class="app-desc">
+          Windows 向けタイマーアプリ。複数タイマーの同時管理、カスタム効果音に対応。<br>
+          Rust / egui 製、インストール不要の単一 exe。
+        </p>
+        <div class="app-footer">
+          <span class="app-link-label">リリースページへ</span>
+          <span class="app-arrow">&#8594;</span>
+        </div>
+      </a>
+
+      <a class="app-card" href="./calendarjp/" style="--app-accent: #ff4d6a;">
+        <div class="app-header">
+          <div class="app-icon-wrap">
+            <img src="./calendarjp/favicon.ico" alt="CalendarJP icon" onerror="this.style.display='none'" />
+          </div>
+          <div>
+            <p class="app-name">CalendarJP</p>
+            <span class="app-tag">カレンダー</span>
+          </div>
+        </div>
+        <p class="app-desc">
+          Windows 11 タスクバー時計クリックで開く日本の祝日カレンダー。<br>
+          純正フライアウトを置き換え。Google カレンダー（iCal）連携対応。
+        </p>
+        <div class="app-footer">
+          <span class="app-link-label">リリースページへ</span>
+          <span class="app-arrow">&#8594;</span>
+        </div>
+      </a>
+
+    </div>
+  </main>
+</body>
+</html>
