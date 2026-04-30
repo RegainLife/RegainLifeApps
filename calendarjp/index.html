@@ -289,14 +289,15 @@
     }
 
     async function loadDownloadCounts() {
-      const url = 'https://api.github.com/repos/RegainLife/CalendarJP-Release/releases';
+      const url = 'https://api.github.com/repos/RegainLife/RegainLifeApps/releases';
       const resp = await fetch(url, { cache: 'no-store' });
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const releases = await resp.json();
       const result = {};
       if (!Array.isArray(releases)) return result;
       for (const rel of releases) {
-        const tag = String(rel.tag_name || '').trim();
+        const raw = String(rel.tag_name || '').trim();
+        const tag = raw.replace(/^calendarjp-/, '');
         if (!tag) continue;
         const assets = Array.isArray(rel.assets) ? rel.assets : [];
         let count = 0;
