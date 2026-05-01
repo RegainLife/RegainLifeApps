@@ -92,6 +92,7 @@
   border-color: var(--accent);
 }
 .screenshot-dialog-body {
+  position: relative;
   padding: 12px;
 }
 .screenshot-dialog img {
@@ -101,9 +102,41 @@
   margin: 0 auto;
   border-radius: 8px;
   background: #0a1022;
+  cursor: pointer;
+}
+.screenshot-dialog-nav {
+  appearance: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 58px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(7, 11, 22, 0.76);
+  color: var(--fg);
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+}
+.screenshot-dialog-nav:hover {
+  border-color: var(--accent);
+  background: rgba(18, 26, 46, 0.94);
+}
+.screenshot-dialog-prev {
+  left: 18px;
+}
+.screenshot-dialog-next {
+  right: 18px;
 }
 @media (max-width: 600px) {
   .screenshot-thumb {
     width: 132px;
+  }
+  .screenshot-dialog-nav {
+    width: 36px;
+    height: 48px;
+    font-size: 28px;
   }
 }
