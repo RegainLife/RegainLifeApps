@@ -1,0 +1,109 @@
+.screenshot-gallery {
+  margin-top: 16px;
+}
+.screenshot-gallery-title {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.screenshot-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px 2px 8px;
+  scrollbar-width: thin;
+}
+.screenshot-thumb {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: #0f1730;
+  color: var(--fg);
+  border-radius: 8px;
+  padding: 0;
+  width: 154px;
+  flex: 0 0 auto;
+  cursor: pointer;
+  overflow: hidden;
+  text-align: left;
+}
+.screenshot-thumb:hover {
+  border-color: var(--accent);
+  background: #142044;
+}
+.screenshot-thumb img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: #0a1022;
+}
+.screenshot-thumb span {
+  display: block;
+  padding: 7px 9px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.screenshot-dialog {
+  width: min(1040px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0;
+  background: #070b16;
+  color: var(--fg);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.55);
+}
+.screenshot-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+}
+.screenshot-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: #0f1730;
+}
+.screenshot-dialog-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+.screenshot-dialog-close {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: #121a2e;
+  color: var(--fg);
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.screenshot-dialog-close:hover {
+  border-color: var(--accent);
+}
+.screenshot-dialog-body {
+  padding: 12px;
+}
+.screenshot-dialog img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 130px);
+  margin: 0 auto;
+  border-radius: 8px;
+  background: #0a1022;
+}
+@media (max-width: 600px) {
+  .screenshot-thumb {
+    width: 132px;
+  }
+}
