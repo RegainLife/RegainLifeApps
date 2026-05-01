@@ -186,7 +186,7 @@
         <img class="hero-logo" src="./favicon.ico?v=1.2.1-muted-red" alt="" aria-hidden="true" />
         <h1>CalendarJP</h1>
       </div>
-      <p class="sub">日本の祝日表示可能で詳細な天気も表示できるカレンダーです。<br>Windows 11 のタスクバー時計クリックで開き、純正の Windows カレンダーフライアウトを置き換えます。<br><br>タスクトレイに常駐し、トレイアイコンの右クリック →「スタートアップに登録」で Windows 起動時に自動起動できます。<br>「終了」するとフックが解除され、純正の Windows カレンダーに戻ります。<br><br>Google カレンダー（iCal URL）との連携、気象庁データによる<strong>天気表示</strong>（降水ナウキャスト含む）にも対応しています。<br><span style="font-size:12px;color:#99a8c6;">※ .NET 9 ランタイムが必要です。</span></p>
+      <p class="sub">日本の祝日表示可能で詳細な天気も表示できるカレンダーです。<br>Windows 11 のタスクバー時計クリックで開き、純正の Windows カレンダーフライアウトを置き換えます。<br><br><strong>CalendarJPSetup.exe</strong> でインストールし、Windows の「インストールされているアプリ」からアンインストールできます。自動アップデートも同じ setup exe を使って適用します。<br><br>タスクトレイに常駐し、トレイアイコンの右クリック →「スタートアップに登録」で Windows 起動時に自動起動できます。<br>「終了」するとフックが解除され、純正の Windows カレンダーに戻ります。<br><br>Google カレンダー（iCal URL）との連携、気象庁データによる<strong>天気表示</strong>（降水ナウキャスト含む）にも対応しています。<br><span style="font-size:12px;color:#99a8c6;">※ .NET 9 ランタイムが必要です。</span></p>
       <div class="feature-wrap">
         <button
           id="feature-toggle-btn"
@@ -269,7 +269,9 @@
         title: '運用',
         items: [
           'タスクトレイ常駐、右クリック →「スタートアップに登録」で Windows 起動時に自動起動',
-          '新しいバージョンを検出すると、同梱の RegUpd によりアプリ内から更新可能',
+          '新規インストールと自動アップデートは CalendarJPSetup.exe に統一',
+          '新しいバージョンを検出すると、同梱の RegUpd が setup exe を取得してサイレント更新',
+          'Windows の「インストールされているアプリ」からアンインストール可能',
           '「終了」でフックが解除され、純正の Windows カレンダーに戻る',
           '動作要件: Windows 11 x64、.NET 9 ランタイム',
           '祝日データはバックグラウンドで外部 API から取得しキャッシュ'
@@ -322,7 +324,12 @@
         let count = 0;
         for (const a of assets) {
           const name = String(a.name || '');
-          if (name.toLowerCase() === 'calendarjp.zip') count += Number(a.download_count || 0);
+          const lowerName = name.toLowerCase();
+          if (lowerName === 'calendarjp.zip'
+              || lowerName === 'calendarjpsetup.exe'
+              || lowerName.startsWith('calendarjp_v')) {
+            count += Number(a.download_count || 0);
+          }
         }
         result[tag] = count;
       }

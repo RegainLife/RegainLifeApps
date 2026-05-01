@@ -1,82 +1,90 @@
 [
-    {
-        "version": "v1.3.5",
-        "published_at": "2026-05-01",
-        "notes_url": "./history.html#v1.3.5",
-        "notes_md_url": "./notes/v1.3.5.md",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.5/CalendarJP_v1.3.5.zip",
-        "sha256": "65bb42e55ba1979d475ef30460c6477c75d18182c9e7f60360cdef49417eae32"
-    },
-    {
-        "version": "v1.3.4",
-        "published_at": "2026-05-01",
-        "notes_url": "./history.html#v1.3.4",
-        "notes_md_url": "./notes/v1.3.4.md",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.4/CalendarJP_v1.3.4.zip",
-        "sha256": "a8730dca381253d153bc4e4d9ceea61b80a64bfd694e3f94cc0d3937c96f72e9"
-    },
-    {
-        "version": "v1.3.3",
-        "published_at": "2026-05-01",
-        "notes_url": "./history.html#v1.3.3",
-        "notes_md_url": "./notes/v1.3.3.md",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.3/CalendarJP.zip",
-        "sha256": "8c2edd51440c95bfc1b9937b0f28bb49e2aa273836bf6586f015d83e84c6d886"
-    },
-    {
-        "version": "v1.3.2",
-        "published_at": "2026-05-01",
-        "notes_url": "./history.html#v1.3.2",
-        "notes_md_url": "./notes/v1.3.2.md",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.2/CalendarJP.zip",
-        "sha256": "48b36aea800e7c00c14e369b57a288584a906684a0578ab221af2cd59c371d08"
-    },
-    {
-        "version": "v1.3.1",
-        "published_at": "2026-05-01",
-        "notes_url": "./history.html#v1.3.1",
-        "notes_md_url": "./notes/v1.3.1.md",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.1/CalendarJP.zip",
-        "sha256": "4da40f278debff00984161cd3ff759fd35fd66bb772e29287b444224631237b1"
-    },
-    {
-        "version": "v1.3.0",
-        "published_at": "2026-05-01",
-        "notes_url": "./history.html#v1.3.0",
-        "notes_md_url": "./notes/v1.3.0.md",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.0/CalendarJP.zip",
-        "sha256": "3616a4abe9861775b6e04e47aa867211c76965e11c9eff759df625c15fa0650d"
-    },
-    {
-        "version": "v1.2.1",
-        "published_at": "2026-04-30",
-        "notes_url": "./history.html#v1.2.1",
-        "notes_md_url": "./notes/v1.2.1.md",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.2.1/CalendarJP.zip",
-        "sha256": "5abb48d15c91742e42de10826565d9dfb8dfe1d41753564d4576725ae81a86fd"
-    },
-    {
-        "version": "v1.2.0",
-        "published_at": "2026-04-30",
-        "notes_url": "./history.html#v1.2.0",
-        "notes_md_url": "./notes/v1.2.0.md",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.2.0/CalendarJP.zip",
-        "sha256": "6a0c7341109977485a951131b4812a622fa81f806e8e02933cecafe793996517"
-    },
-    {
-        "version": "v1.1.0",
-        "published_at": "2026-04-30",
-        "notes_url": "./history.html#v1.1.0",
-        "notes_md_url": "./notes/v1.1.0.md",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.1.0/CalendarJP.zip",
-        "sha256": "1b089d77ea206a4755017a0f400f9345a1c1064d93fa1dfeff5829752602be80"
-    },
-    {
-        "version": "v1.0.0",
-        "published_at": "2026-04-30",
-        "notes_url": "",
-        "notes_md_url": "",
-        "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.0.0/CalendarJP.zip",
-        "sha256": "1259ccb5aed9aa0f4698de6ea6bf4e69bf277ffb4467a26cd083cdb98351296c"
-    }
+  {
+    "version": "v1.4.0",
+    "published_at": "2026-05-01",
+    "notes_url": "./history.html#v1.4.0",
+    "notes_md_url": "./notes/v1.4.0.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.4.0/CalendarJPSetup.exe",
+    "sha256": "9e491fb1e9fc008884a5da5ec171719fc7c38a5dade93f3d93b8bafe200d885e"
+  },
+  {
+    "version": "v1.3.5",
+    "published_at": "2026-05-01",
+    "notes_url": "./history.html#v1.3.5",
+    "notes_md_url": "./notes/v1.3.5.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.5/CalendarJP_v1.3.5.zip",
+    "sha256": "65bb42e55ba1979d475ef30460c6477c75d18182c9e7f60360cdef49417eae32"
+  },
+  {
+    "version": "v1.3.4",
+    "published_at": "2026-05-01",
+    "notes_url": "./history.html#v1.3.4",
+    "notes_md_url": "./notes/v1.3.4.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.4/CalendarJP_v1.3.4.zip",
+    "sha256": "a8730dca381253d153bc4e4d9ceea61b80a64bfd694e3f94cc0d3937c96f72e9"
+  },
+  {
+    "version": "v1.3.3",
+    "published_at": "2026-05-01",
+    "notes_url": "./history.html#v1.3.3",
+    "notes_md_url": "./notes/v1.3.3.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.3/CalendarJP.zip",
+    "sha256": "8c2edd51440c95bfc1b9937b0f28bb49e2aa273836bf6586f015d83e84c6d886"
+  },
+  {
+    "version": "v1.3.2",
+    "published_at": "2026-05-01",
+    "notes_url": "./history.html#v1.3.2",
+    "notes_md_url": "./notes/v1.3.2.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.2/CalendarJP.zip",
+    "sha256": "48b36aea800e7c00c14e369b57a288584a906684a0578ab221af2cd59c371d08"
+  },
+  {
+    "version": "v1.3.1",
+    "published_at": "2026-05-01",
+    "notes_url": "./history.html#v1.3.1",
+    "notes_md_url": "./notes/v1.3.1.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.1/CalendarJP.zip",
+    "sha256": "4da40f278debff00984161cd3ff759fd35fd66bb772e29287b444224631237b1"
+  },
+  {
+    "version": "v1.3.0",
+    "published_at": "2026-05-01",
+    "notes_url": "./history.html#v1.3.0",
+    "notes_md_url": "./notes/v1.3.0.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.0/CalendarJP.zip",
+    "sha256": "3616a4abe9861775b6e04e47aa867211c76965e11c9eff759df625c15fa0650d"
+  },
+  {
+    "version": "v1.2.1",
+    "published_at": "2026-04-30",
+    "notes_url": "./history.html#v1.2.1",
+    "notes_md_url": "./notes/v1.2.1.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.2.1/CalendarJP.zip",
+    "sha256": "5abb48d15c91742e42de10826565d9dfb8dfe1d41753564d4576725ae81a86fd"
+  },
+  {
+    "version": "v1.2.0",
+    "published_at": "2026-04-30",
+    "notes_url": "./history.html#v1.2.0",
+    "notes_md_url": "./notes/v1.2.0.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.2.0/CalendarJP.zip",
+    "sha256": "6a0c7341109977485a951131b4812a622fa81f806e8e02933cecafe793996517"
+  },
+  {
+    "version": "v1.1.0",
+    "published_at": "2026-04-30",
+    "notes_url": "./history.html#v1.1.0",
+    "notes_md_url": "./notes/v1.1.0.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.1.0/CalendarJP.zip",
+    "sha256": "1b089d77ea206a4755017a0f400f9345a1c1064d93fa1dfeff5829752602be80"
+  },
+  {
+    "version": "v1.0.0",
+    "published_at": "2026-04-30",
+    "notes_url": "",
+    "notes_md_url": "",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.0.0/CalendarJP.zip",
+    "sha256": "1259ccb5aed9aa0f4698de6ea6bf4e69bf277ffb4467a26cd083cdb98351296c"
+  }
 ]
