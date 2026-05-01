@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FastMirror Releases</title>
+  <link rel="icon" href="./favicon.ico" sizes="any" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121a2e;
+      --fg: #dbe6ff;
+      --muted: #99a8c6;
+      --line: #283555;
+      --accent: #00d2ff;
+      --accent-hover: #00a6cf;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 16px 48px;
+    }
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .hero-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      flex: 0 0 auto;
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0.2px;
+    }
+    .sub {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .card {
+      margin-top: 18px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .feature-wrap {
+      margin-top: 16px;
+    }
+    .feature-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: #0f1933;
+      color: var(--fg);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .feature-toggle-btn:hover {
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+    .feature-toggle-btn .arrow {
+      transition: transform 0.18s ease;
+    }
+    .feature-toggle-btn[aria-expanded="true"] .arrow {
+      transform: rotate(180deg);
+    }
+    .feature-panel {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #0f1730;
+      padding: 14px;
+    }
+    .feature-title {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+    }
+    .feature-section + .feature-section {
+      margin-top: 10px;
+    }
+    .feature-section h3 {
+      margin: 0 0 4px 0;
+      color: #b6c8ee;
+      font-size: 13px;
+    }
+    .feature-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--fg);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 700;
+      background: #111f44;
+    }
+    tr:last-child td { border-bottom: 0; }
+    code {
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      color: #c5d6ff;
+      word-break: break-all;
+    }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      color: #041427;
+      background: var(--accent);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 600;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      margin-right: 12px;
+      font-size: 13px;
+    }
+    .links a:hover { text-decoration: underline; }
+    .muted { color: var(--muted); }
+    @media (max-width: 720px) {
+      th:nth-child(5), td:nth-child(5), th:nth-child(6), td:nth-child(6) {
+        display: none;
+      }
+      h1 { font-size: 24px; }
+      .hero-logo { width: 30px; height: 30px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="breadcrumb"><a href="../">RegainLife Apps</a> &rsaquo; Fast Mirror</p>
+
+    <section class="hero">
+      <div class="hero-title">
+        <img class="hero-logo" src="./favicon.ico" alt="" aria-hidden="true" />
+        <h1>Fast Mirror</h1>
+      </div>
+      <p class="sub">Windows 向けフォルダ同期アプリです。<br>同期元フォルダの変更を監視し、同期先へ自動反映します。<br><br>インストール不要でアプリ本体は軽量（約10MB）<br>常駐待機中は、イベント発生時を除きCPU使用率はほぼ0%。<br><br>転送エンジンを徹底最適化し、同一条件計測では某老舗コピーソフト比で約95.5%の転送性能を記録しました。<br>※ベリファイ無効・同一データセットでの計測結果<br><br>自動アップデート対応のため、基本的に最新版をご使用いただけます。</p>
+      <div class="feature-wrap">
+        <button
+          id="feature-toggle-btn"
+          class="feature-toggle-btn"
+          type="button"
+          aria-expanded="false"
+          aria-controls="feature-panel"
+        >
+          <span class="arrow">&#9660;</span>
+          <span>機能一覧</span>
+        </button>
+        <div id="feature-panel" class="feature-panel" hidden>
+          <h2 id="feature-title" class="feature-title">最新機能一覧</h2>
+          <div id="feature-sections"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Version</th>
+            <th>Published</th>
+            <th>Download</th>
+            <th>DL Count</th>
+            <th>Release Notes</th>
+            <th>SHA-256</th>
+          </tr>
+        </thead>
+        <tbody id="release-body">
+          <tr><td colspan="6" class="muted">読み込み中...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" style="padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-size: 15px; font-weight: 700;">更新履歴</span>
+      <a class="btn" href="./history.html">全バージョンの更新履歴を見る</a>
+    </section>
+  </main>
+
+  <script>
+    const DL_CACHE_KEY = 'fastmirror_dl_counts_v1';
+    const FEATURE_SECTIONS = [
+      {
+        title: '同期',
+        items: [
+          '同期元フォルダの変更を監視して、同期先へ自動反映',
+          '作成・更新・削除・リネームをまとめて追従',
+          '削除の扱いを選択可能（同期先も削除 / 同期先は保持）',
+          '同じファイルは再コピーを抑えて無駄な上書きを回避',
+          '大量変更時も取りこぼしを補完する再スキャンに対応'
+        ]
+      },
+      {
+        title: '性能',
+        items: [
+          '転送エンジン最適化による高速コピー',
+          'メモリ上限の調整で、環境に合わせて速度と負荷をバランス',
+          '同一ディスク最適化・Google Drive最適化の切替',
+          '進捗・転送速度・理論比・ETAをリアルタイム表示'
+        ]
+      },
+      {
+        title: 'Google Drive / GWS',
+        items: [
+          'Google Drive一時ファイルを除外し、不要同期を抑制',
+          '日次750GBガード（24時間ウィンドウ）で超過時は保留キューへ退避',
+          '容量不足・件数制限などの失敗時は待機して自動再試行',
+          '件数逼迫時はZIP集約へ切替（共有ドライブ配下は全体件数推定を使用）'
+        ]
+      },
+      {
+        title: '運用',
+        items: [
+          'タスクトレイ常駐（最小化起動、閉じるで常駐は設定で有効化）',
+          '曜日・時刻指定のタイマーで自動監視開始',
+          '自動アップデート対応（更新通知・リリースノート表示）',
+          'ログ表示（フィルタ / 自動スクロール / エラー確認）'
+        ]
+      }
+    ];
+
+    function loadCountCache() {
+      try {
+        const raw = localStorage.getItem(DL_CACHE_KEY);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return {};
+        const result = {};
+        for (const [k, v] of Object.entries(parsed)) {
+          const n = Number(v);
+          if (k && Number.isFinite(n) && n >= 0) result[k] = n;
+        }
+        return result;
+      } catch (_) { return {}; }
+    }
+
+    function saveCountCache(map) {
+      try { localStorage.setItem(DL_CACHE_KEY, JSON.stringify(map)); } catch (_) {}
+    }
+
+    function mergeCountMap(prev, next) {
+      const merged = { ...prev };
+      for (const [k, v] of Object.entries(next)) {
+        const n = Number(v);
+        if (!Number.isFinite(n) || n < 0) continue;
+        const old = Number(merged[k] || 0);
+        merged[k] = n > old ? n : old;
+      }
+      return merged;
+    }
+
+    async function loadDownloadCounts() {
+      const url = 'https://api.github.com/repos/RegainLife/RegainLifeApps/releases';
+      const resp = await fetch(url, { cache: 'no-store' });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const releases = await resp.json();
+      const result = {};
+      if (!Array.isArray(releases)) return result;
+      for (const rel of releases) {
+        const raw = String(rel.tag_name || '').trim();
+        const tag = raw.replace(/^fastmirror-/, '');
+        if (!tag) continue;
+        const assets = Array.isArray(rel.assets) ? rel.assets : [];
+        let count = 0;
+        for (const a of assets) {
+          const name = String(a.name || '');
+          if (name.toLowerCase() === 'fastmirror.exe') count += Number(a.download_count || 0);
+        }
+        result[tag] = count;
+      }
+      return result;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function parseVersionParts(v) {
+      const text = String(v || '').trim().replace(/^v/i, '');
+      if (!text) return [0, 0, 0];
+      return text.split('.').map(n => Number.parseInt(n, 10) || 0);
+    }
+
+    function pickLatestVersion(list) {
+      if (!Array.isArray(list) || list.length === 0) return '';
+      let latest = String(list[0].version || '').trim();
+      let latestParts = parseVersionParts(latest);
+      for (const r of list) {
+        const cur = String(r.version || '').trim();
+        if (!cur) continue;
+        const parts = parseVersionParts(cur);
+        const len = Math.max(parts.length, latestParts.length);
+        let newer = false;
+        for (let i = 0; i < len; i++) {
+          const a = parts[i] || 0, b = latestParts[i] || 0;
+          if (a > b) { newer = true; break; }
+          if (a < b) { newer = false; break; }
+        }
+        if (newer) { latest = cur; latestParts = parts; }
+      }
+      return latest;
+    }
+
+    function renderFeatureList(latestVersion) {
+      const title = document.getElementById('feature-title');
+      const host = document.getElementById('feature-sections');
+      if (!title || !host) return;
+      title.textContent = `${latestVersion || '最新'} 時点の機能一覧`;
+      host.innerHTML = FEATURE_SECTIONS.map(section => {
+        const items = Array.isArray(section.items) ? section.items : [];
+        const li = items.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+        return `<section class="feature-section"><h3>${escapeHtml(section.title)}</h3><ul class="feature-list">${li}</ul></section>`;
+      }).join('');
+    }
+
+    function initFeatureToggle() {
+      const btn = document.getElementById('feature-toggle-btn');
+      const panel = document.getElementById('feature-panel');
+      if (!btn || !panel) return;
+      btn.addEventListener('click', () => {
+        const next = btn.getAttribute('aria-expanded') !== 'true';
+        btn.setAttribute('aria-expanded', String(next));
+        panel.hidden = !next;
+      });
+    }
+
+    async function loadReleases() {
+      const body = document.getElementById('release-body');
+      try {
+        const [listResp, liveCountMap] = await Promise.all([
+          fetch('./releases.json', { cache: 'no-store' }),
+          loadDownloadCounts().catch(() => null)
+        ]);
+        if (!listResp.ok) throw new Error('HTTP ' + listResp.status);
+        const list = await listResp.json();
+        if (!Array.isArray(list) || list.length === 0) {
+          renderFeatureList('');
+          body.innerHTML = '<tr><td colspan="6" class="muted">公開済みリリースがありません。</td></tr>';
+          return;
+        }
+        renderFeatureList(pickLatestVersion(list));
+        const cachedMap = loadCountCache();
+        const countMap = liveCountMap ? mergeCountMap(cachedMap, liveCountMap) : cachedMap;
+        if (liveCountMap) saveCountCache(countMap);
+        body.innerHTML = list.map(r => {
+          const sha = String(r.sha256 || '').slice(0, 16);
+          const n = Number(countMap[r.version]);
+          const versionCount = Number.isFinite(n) && n >= 0 ? n.toLocaleString() : '-';
+          return `
+            <tr>
+              <td><strong>${escapeHtml(r.version || '-')}</strong></td>
+              <td>${escapeHtml(r.published_at || '-')}</td>
+              <td>${r.download_url ? `<a class="btn" href="${escapeHtml(r.download_url)}">DL</a>` : '-'}</td>
+              <td>${versionCount}</td>
+              <td>${r.notes_url ? `<a href="${escapeHtml(r.notes_url)}">ノートを見る</a>` : '-'}</td>
+              <td><code title="${escapeHtml(r.sha256 || '')}">${escapeHtml(sha)}${r.sha256 ? '...' : ''}</code></td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        renderFeatureList('');
+        body.innerHTML = `<tr><td colspan="6" class="muted">releases.json の取得に失敗しました: ${escapeHtml(String(err))}</td></tr>`;
+      }
+    }
+
+    initFeatureToggle();
+    loadReleases();
+  </script>
+</body>
+</html>
