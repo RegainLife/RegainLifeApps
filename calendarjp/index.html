@@ -15,10 +15,13 @@
   <meta property="og:title" content="CalendarJP - Windows向け日本の祝日カレンダーアプリ" />
   <meta property="og:description" content="Windows 11のタスクバー時計から開ける、日本の祝日・天気・Googleカレンダー連携対応のデスクトップカレンダーアプリです。" />
   <meta property="og:url" content="https://regainlife.github.io/RegainLifeApps/calendarjp/" />
-  <meta property="og:image" content="https://regainlife.github.io/RegainLifeApps/favicon.png" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-main.png?v=20260502-1" />
+  <meta property="og:image:alt" content="CalendarJPのWindows向け日本の祝日カレンダー画面" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="CalendarJP - Windows向け日本の祝日カレンダーアプリ" />
   <meta name="twitter:description" content="日本の祝日、天気、Googleカレンダー連携に対応したWindows 11向けデスクトップカレンダーアプリ。" />
+  <meta name="twitter:image" content="https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-main.png?v=20260502-1" />
+  <meta name="theme-color" content="#0b1020" />
   <link rel="icon" href="./favicon.ico?v=1.2.1-muted-red" sizes="any" />
   <link rel="stylesheet" href="../assets/screenshot-gallery.css?v=20260502-1" />
   <script type="application/ld+json">
@@ -33,9 +36,15 @@
     "inLanguage": "ja-JP",
     "isAccessibleForFree": true,
     "url": "https://regainlife.github.io/RegainLifeApps/calendarjp/",
+    "image": "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-main.png?v=20260502-1",
+    "screenshot": [
+      "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-main.png?v=20260502-1",
+      "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-settings-top.png?v=20260502-2",
+      "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-settings-design.png?v=20260502-2"
+    ],
     "downloadUrl": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.4.2/CalendarJPSetup.exe",
     "releaseNotes": "https://regainlife.github.io/RegainLifeApps/calendarjp/history.html",
-    "dateModified": "2026-05-01",
+    "dateModified": "2026-05-02",
     "description": "CalendarJPは、Windows 11のタスクバー時計から開ける日本の祝日対応カレンダーアプリです。天気表示、Googleカレンダー連携、デスクトップ常駐、自動アップデートに対応しています。",
     "featureList": [
       "日本の祝日と振替休日を表示",
@@ -100,6 +109,19 @@
       display: flex;
       align-items: center;
       gap: 10px;
+    }
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .hero-tagline {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
     }
     .hero-logo {
       width: 34px;
@@ -236,7 +258,10 @@
     <section class="hero">
       <div class="hero-title">
         <img class="hero-logo" src="./favicon.ico?v=1.2.1-muted-red" alt="" aria-hidden="true" />
-        <h1>CalendarJP</h1>
+        <div class="hero-copy">
+          <h1>CalendarJP</h1>
+          <p class="hero-tagline">Windows向け日本の祝日カレンダーアプリ</p>
+        </div>
       </div>
       <p class="sub">CalendarJPは、Windows 11 のタスクバー時計クリックで開ける日本の祝日対応カレンダーアプリです。純正の Windows カレンダーを違和感少なく置き換えるデスクトップアプリとして、祝日、天気、Google カレンダーの予定をひとつの画面で確認できます。<br><br>タスクトレイに常駐し、トレイアイコンの右クリック →「スタートアップに登録」で Windows 起動時に自動起動できます。<br>「終了」すると純正の Windows カレンダーに戻ります。<br><br>Google カレンダー（iCal URL）との連携、気象庁データによる<strong>天気表示</strong>（降水ナウキャスト含む）にも対応しています。<br>v1.4以降からインストール式になり、自動アップデートにも対応しました。<br><span style="font-size:12px;color:#99a8c6;">※ .NET 9 ランタイムが必要です、見つからない場合は自動でインストールするか確認があります。</span></p>
       <div class="feature-wrap">
@@ -469,7 +494,7 @@
             <tr>
               <td><strong>${escapeHtml(r.version || '-')}</strong></td>
               <td>${escapeHtml(r.published_at || '-')}</td>
-              <td>${r.download_url ? `<a class="btn" href="${escapeHtml(r.download_url)}">DL</a>` : '-'}</td>
+              <td>${r.download_url ? `<a class="btn" href="${escapeHtml(r.download_url)}" aria-label="${escapeHtml((r.version || '最新') + ' の CalendarJPSetup.exe をダウンロード')}" title="${escapeHtml((r.version || '最新') + ' の CalendarJPSetup.exe をダウンロード')}">DL</a>` : '-'}</td>
               <td>${versionCount}</td>
               <td>${r.notes_url ? `<a href="${escapeHtml(r.notes_url)}">ノートを見る</a>` : '-'}</td>
               <td><code title="${escapeHtml(r.sha256 || '')}">${escapeHtml(sha)}${r.sha256 ? '...' : ''}</code></td>
