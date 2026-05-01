@@ -1,7 +1,7 @@
 {
     "channel": "stable",
-    "version": "1.3.4",
-    "url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.4/CalendarJP_v1.3.4.zip",
-    "sha256": "a8730dca381253d153bc4e4d9ceea61b80a64bfd694e3f94cc0d3937c96f72e9",
+    "version": "1.3.5",
+    "url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.3.5/CalendarJP_v1.3.5.zip",
+    "sha256": "65bb42e55ba1979d475ef30460c6477c75d18182c9e7f60360cdef49417eae32",
     "notes_url": "https://regainlife.github.io/RegainLifeApps/calendarjp/history.html"
 }
