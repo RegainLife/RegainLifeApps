@@ -222,14 +222,40 @@
       font-size: 14px;
       line-height: 1.7;
     }
-    .modal ol {
-      margin: 0 0 14px 20px;
-      padding: 0;
+    .screen-guide {
+      display: grid;
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .screen-step {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(160px, 210px);
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(15, 25, 51, 0.74);
+    }
+    .screen-step-text {
       color: var(--fg);
       font-size: 14px;
       line-height: 1.7;
     }
-    .modal li + li { margin-top: 4px; }
+    .screen-step-text strong {
+      color: #fff;
+    }
+    .screen-step-img {
+      width: 100%;
+      border: 1px solid rgba(137, 159, 205, 0.34);
+      border-radius: 8px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+    }
+    @media (max-width: 620px) {
+      .screen-step {
+        grid-template-columns: 1fr;
+      }
+    }
     .modal-note {
       padding: 10px 12px;
       border: 1px solid var(--line);
@@ -430,11 +456,22 @@
         CalendarJPSetup.exe は現在コード署名を行っていないため、Microsoft Defender SmartScreen によって
         「Windows によって PC が保護されました」と表示される場合があります。
       </p>
-      <ol>
-        <li>警告画面の「詳細情報」をクリックします。</li>
-        <li>表示された発行元とファイル名を確認します。</li>
-        <li>問題なければ「実行」をクリックします。</li>
-      </ol>
+      <div class="screen-guide">
+        <div class="screen-step">
+          <div class="screen-step-text">
+            <strong>1. 「詳細情報」をクリック</strong><br>
+            最初の画面では「実行」ボタンが表示されないため、「詳細情報」をクリックします。
+          </div>
+          <img class="screen-step-img" src="./screenshots/smartscreen-dialog-detail.png" alt="SmartScreen の詳細情報リンク">
+        </div>
+        <div class="screen-step">
+          <div class="screen-step-text">
+            <strong>2. ファイル名を確認して「実行」</strong><br>
+            表示内容を確認し、問題なければ「実行」をクリックします。
+          </div>
+          <img class="screen-step-img" src="./screenshots/smartscreen-dialog-run.png" alt="SmartScreen の実行ボタン">
+        </div>
+      </div>
       <p class="modal-note">
         不安な場合は、ダウンロードしたファイルの SHA-256 がリリース表の値と一致しているか確認してください。
         公式配布元はこのページと GitHub Releases です。
