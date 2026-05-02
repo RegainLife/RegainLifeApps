@@ -155,6 +155,87 @@
       font-size: 12px;
       color: #99a8c6;
     }
+    .support-note {
+      margin-top: -4px;
+      font-size: 12px;
+    }
+    .support-link {
+      appearance: none;
+      border: 0;
+      background: none;
+      color: var(--accent);
+      font: inherit;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+    }
+    .support-link:hover { text-decoration: underline; }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(5, 8, 18, 0.72);
+      z-index: 20;
+    }
+    .modal-backdrop.is-open { display: flex; }
+    .modal {
+      width: min(560px, 100%);
+      max-height: min(720px, calc(100vh - 36px));
+      overflow: auto;
+      background: #121a2e;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      padding: 20px;
+    }
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .modal-title {
+      margin: 0;
+      font-size: 18px;
+      color: #fff;
+    }
+    .modal-close {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #0f1933;
+      color: var(--fg);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .modal-close:hover { border-color: var(--accent); }
+    .modal p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .modal ol {
+      margin: 0 0 14px 20px;
+      padding: 0;
+      color: var(--fg);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .modal li + li { margin-top: 4px; }
+    .modal-note {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #0f1730;
+    }
     .card {
       margin-top: 18px;
       background: var(--card);
@@ -293,6 +374,9 @@
           <span class="sub-line">v1.4以降からインストール式になり、自動アップデートにも対応しました。</span>
         </p>
         <p class="sub-note">※ .NET 9 ランタイムが必要です、見つからない場合は自動でインストールするか確認があります。</p>
+        <p class="support-note">
+          <button id="smartscreen-help-btn" class="support-link" type="button">※ インストール時にSmartScreen警告が出る場合</button>
+        </p>
       </div>
       <div class="feature-wrap">
         <button
@@ -335,6 +419,28 @@
       <a class="btn" href="./history.html">全バージョンの更新履歴を見る</a>
     </section>
   </main>
+
+  <div id="smartscreen-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="smartscreen-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="smartscreen-title" class="modal-title">SmartScreen警告が出る場合</h2>
+        <button id="smartscreen-close-btn" class="modal-close" type="button" aria-label="閉じる">&times;</button>
+      </div>
+      <p>
+        CalendarJPSetup.exe は現在コード署名を行っていないため、Microsoft Defender SmartScreen によって
+        「Windows によって PC が保護されました」と表示される場合があります。
+      </p>
+      <ol>
+        <li>警告画面の「詳細情報」をクリックします。</li>
+        <li>表示された発行元とファイル名を確認します。</li>
+        <li>問題なければ「実行」をクリックします。</li>
+      </ol>
+      <p class="modal-note">
+        不安な場合は、ダウンロードしたファイルの SHA-256 がリリース表の値と一致しているか確認してください。
+        公式配布元はこのページと GitHub Releases です。
+      </p>
+    </div>
+  </div>
 
   <script>
     const DL_CACHE_KEY = 'calendarjp_dl_counts_v1';
@@ -501,6 +607,29 @@
       });
     }
 
+    function initSmartScreenHelp() {
+      const openBtn = document.getElementById('smartscreen-help-btn');
+      const modal = document.getElementById('smartscreen-modal');
+      const closeBtn = document.getElementById('smartscreen-close-btn');
+      if (!openBtn || !modal || !closeBtn) return;
+
+      const close = () => {
+        modal.classList.remove('is-open');
+        openBtn.focus();
+      };
+      openBtn.addEventListener('click', () => {
+        modal.classList.add('is-open');
+        closeBtn.focus();
+      });
+      closeBtn.addEventListener('click', close);
+      modal.addEventListener('click', event => {
+        if (event.target === modal) close();
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && modal.classList.contains('is-open')) close();
+      });
+    }
+
     async function loadReleases() {
       const body = document.getElementById('release-body');
       try {
@@ -541,6 +670,7 @@
     }
 
     initFeatureToggle();
+    initSmartScreenHelp();
     loadReleases();
   </script>
   <script src="../assets/screenshot-gallery.js?v=20260502-1"></script>
