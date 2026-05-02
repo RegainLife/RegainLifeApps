@@ -177,9 +177,13 @@
           return;
         }
         timeline.innerHTML = '';
+        const requestedVersion = normalizeVersionHash(location.hash);
+        let requestedEntry = null;
         for (const entry of list) {
           const el = document.createElement('div');
           el.className = 'entry';
+          const entryVersion = normalizeVersion(entry.version);
+          if (entryVersion) el.id = 'v' + entryVersion;
           el.innerHTML = `
             <div class="entry-header">
               <span class="entry-arrow">&#9654;</span>
@@ -196,10 +200,27 @@
             if (isOpen) loadNoteContent(entry, body);
           });
           timeline.appendChild(el);
+          if (requestedVersion && requestedVersion === entryVersion) {
+            requestedEntry = { el, entry, body };
+          }
+        }
+
+        if (requestedEntry) {
+          requestedEntry.el.classList.add('open');
+          await loadNoteContent(requestedEntry.entry, requestedEntry.body);
+          requestedEntry.el.scrollIntoView({ block: 'start' });
         }
       } catch (err) {
         timeline.innerHTML = '<p class="muted">更新履歴の読み込みに失敗しました: ' + escapeHtml(err) + '</p>';
       }
+    }
+
+    function normalizeVersionHash(hash) {
+      return normalizeVersion(String(hash || '').replace(/^#/, ''));
+    }
+
+    function normalizeVersion(version) {
+      return String(version || '').trim().replace(/^v/i, '');
     }
 
     init();
