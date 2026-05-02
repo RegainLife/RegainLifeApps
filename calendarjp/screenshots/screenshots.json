@@ -7,13 +7,13 @@
     },
     {
       "title": "設定画面",
-      "alt": "CalendarJPの追加カレンダーと天気設定画面",
-      "src": "./screenshots/calendarjp-settings-top.png?v=20260502-2"
+      "alt": "CalendarJPの追加カレンダー・天気・表示設定画面",
+      "src": "./screenshots/calendarjp-settings-top.png?v=20260502-3"
     },
     {
       "title": "デザイン設定",
-      "alt": "CalendarJPの背景色や祝日色を変更できるデザイン設定画面",
-      "src": "./screenshots/calendarjp-settings-design.png?v=20260502-2"
+      "alt": "CalendarJPの表示位置や自由選択ピッカー付きデザイン設定画面",
+      "src": "./screenshots/calendarjp-settings-design.png?v=20260502-3"
     }
   ]
 }
