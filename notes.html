@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Release Notes</title>
+  <link rel="icon" href="./favicon.png" sizes="any" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121a2e;
+      --fg: #dbe6ff;
+      --muted: #99a8c6;
+      --line: #283555;
+      --accent: #00d2ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 16px 64px;
+    }
+    .back {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .back a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .back a:hover { text-decoration: underline; }
+    .content {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 28px 32px;
+      line-height: 1.7;
+    }
+    .content h1 { font-size: 22px; margin: 0 0 16px; }
+    .content h2 { font-size: 16px; color: var(--accent); margin: 24px 0 8px; }
+    .content ul { padding-left: 20px; margin: 0; }
+    .content li { margin-bottom: 6px; color: var(--fg); }
+    .error { color: #f87171; padding: 20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="back" id="backLink"></div>
+    <div class="content" id="content">読み込み中...</div>
+  </div>
+  <script>
+    (async () => {
+      const params = new URLSearchParams(location.search);
+      const file = params.get('file');
+
+      // バックリンク生成
+      const backEl = document.getElementById('backLink');
+      const app = file ? file.split('/')[0] : null;
+      if (app) {
+        backEl.innerHTML = `<a href="/${location.pathname.split('/')[1]}/${app}/">← ${app} トップ</a>`;
+      }
+
+      if (!file) {
+        document.getElementById('content').innerHTML = '<p class="error">ファイルが指定されていません。</p>';
+        return;
+      }
+
+      const base = location.origin + '/' + location.pathname.split('/')[1] + '/';
+      const url = base + file;
+
+      try {
+        const resp = await fetch(url, { cache: 'no-store' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const md = await resp.text();
+        const html = DOMPurify.sanitize(marked.parse(md));
+        document.getElementById('content').innerHTML = html;
+
+        const h1 = document.querySelector('.content h1');
+        if (h1) document.title = h1.textContent;
+      } catch (e) {
+        document.getElementById('content').innerHTML = `<p class="error">読み込み失敗: ${e.message}</p>`;
+      }
+    })();
+  </script>
+</body>
+</html>
