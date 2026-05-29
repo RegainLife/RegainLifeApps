@@ -1,8 +1,8 @@
 {
-    "channel":  "stable",
-    "version":  "0.1.0",
-    "url":  "https://github.com/RegainLife/RegainLifeApps/releases/download/spiceclock-v0.1.0/SpiceClock.Setup.exe",
-    "sha256":  "2051723e5d98b2194b8984b46ef285da4d4f9d413adca649a20ff1adf99a36b0",
-    "notes_url":  "https://regainlife.github.io/RegainLifeApps/spiceclock/notes/v0.1.0.md",
-    "published_at":  "2026-05-21T00:00:00+09:00"
+  "channel": "stable",
+  "version": "0.1.1",
+  "url": "https://github.com/RegainLife/RegainLifeApps/releases/download/spiceclock-v0.1.1/SpiceClock.Setup.exe",
+  "sha256": "321b8e873a2a72593e8b1eaf9ab58f1b06511713fd73fbd3bbc2000cc40f326d",
+  "notes_url": "https://regainlife.github.io/RegainLifeApps/spiceclock/notes/v0.1.1.md",
+  "published_at": "2026-05-29T00:00:00+09:00"
 }
