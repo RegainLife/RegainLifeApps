@@ -1,8 +1,14 @@
 [
-    {
-        "version":  "v0.1.0",
-        "date":  "2026-05-21",
-        "file":  "notes/v0.1.0.md",
-        "summary":  "SpiceClock の初回公開リリース。Clock / Visualizer を独立Widgetとして扱うWindows常駐型デスクトップHUDエンジン。"
-    }
+  {
+    "version": "v0.1.1",
+    "date": "2026-05-29",
+    "file": "notes/v0.1.1.md",
+    "summary": "透明ウィンドウの可変表示領域、時計/ビジュアライザのレイヤー順、設定画面の状態記憶と表示切替を改善。"
+  },
+  {
+    "version": "v0.1.0",
+    "date": "2026-05-21",
+    "file": "notes/v0.1.0.md",
+    "summary": "SpiceClock の初回公開リリース。Clock / Visualizer を独立Widgetとして扱うWindows常駐型デスクトップHUDエンジン。"
+  }
 ]
