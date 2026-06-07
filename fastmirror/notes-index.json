@@ -1,5 +1,11 @@
 [
   {
+    "version": "v0.4.1",
+    "date": "2026-06-07",
+    "file": "fastmirror/notes/v0.4.1.md",
+    "summary": "旧名コピーが後から完了した場合でも、同期先に残った旧名ファイルを整理できるようにしました。"
+  },
+  {
     "version": "v0.4.0",
     "date": "2026-06-06",
     "file": "fastmirror/notes/v0.4.0.md",
