@@ -1,5 +1,11 @@
 [
   {
+    "version": "v0.4.2",
+    "date": "2026-06-26",
+    "file": "fastmirror/notes/v0.4.2.md",
+    "summary": "前回リリースがMicrosoft Defenderの誤検知に引っかかったため、ビルド設定を見直して対策しました。機能変更はありません。"
+  },
+  {
     "version": "v0.4.1",
     "date": "2026-06-07",
     "file": "fastmirror/notes/v0.4.1.md",
