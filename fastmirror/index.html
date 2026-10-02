@@ -8,13 +8,13 @@
   <link rel="stylesheet" href="../assets/screenshot-gallery.css" />
   <style>
     :root {
-      --bg: #0b1020;
-      --card: #121a2e;
-      --fg: #dbe6ff;
-      --muted: #99a8c6;
-      --line: #283555;
-      --accent: #00d2ff;
-      --accent-hover: #00a6cf;
+      --bg: #0e1116;
+      --card: #15121f;
+      --fg: #e6edf3;
+      --muted: #9aa7b4;
+      --line: #2a2340;
+      --accent: #a78bfa;
+      --accent-hover: #c4b5fd;
     }
     * { box-sizing: border-box; }
     body {
@@ -81,7 +81,7 @@
       align-items: center;
       gap: 8px;
       border: 1px solid var(--line);
-      background: #0f1933;
+      background: #1a1430;
       color: var(--fg);
       border-radius: 10px;
       padding: 10px 14px;
@@ -103,7 +103,7 @@
       margin-top: 10px;
       border: 1px solid var(--line);
       border-radius: 12px;
-      background: #0f1730;
+      background: #120e1f;
       padding: 14px;
     }
     .feature-title {
@@ -115,7 +115,7 @@
     }
     .feature-section h3 {
       margin: 0 0 4px 0;
-      color: #b6c8ee;
+      color: #c4b5fd;
       font-size: 13px;
     }
     .feature-list {
@@ -139,19 +139,19 @@
     th {
       color: var(--muted);
       font-weight: 700;
-      background: #111f44;
+      background: #1a1430;
     }
     tr:last-child td { border-bottom: 0; }
     code {
       font-family: Consolas, monospace;
       font-size: 12px;
-      color: #c5d6ff;
+      color: #c4b5fd;
       word-break: break-all;
     }
     .btn {
       display: inline-block;
       text-decoration: none;
-      color: #041427;
+      color: #1e1033;
       background: var(--accent);
       border-radius: 8px;
       padding: 8px 12px;
@@ -187,7 +187,7 @@
         <img class="hero-logo" src="./favicon.ico" alt="" aria-hidden="true" />
         <h1>Fast Mirror</h1>
       </div>
-      <p class="sub">Windows 向けフォルダ同期アプリです。<br>同期元フォルダの変更を監視し、同期先へ自動反映します。<br><br>インストール不要でアプリ本体は軽量（約10MB）<br>常駐待機中は、イベント発生時を除きCPU使用率はほぼ0%。<br><br>転送エンジンを徹底最適化し、同一条件計測では某老舗コピーソフト比で約95.5%の転送性能を記録しました。<br>※ベリファイ無効・同一データセットでの計測結果<br><br>自動アップデート対応のため、基本的に最新版をご使用いただけます。</p>
+      <p class="sub">Windows 向けフォルダ同期アプリです。<br>同期元フォルダの変更を監視し、同期先へ自動反映します。<br><br>いま同期しているファイル、今日同期されたファイルがひと目でわかる画面と、同期が終わると右下に出る完了通知で、同期の状況をすぐ確認できます。<br><br>インストール不要でアプリ本体は軽量<br>常駐待機中は、イベント発生時を除きCPU使用率はほぼ0%。<br><br>転送エンジンを徹底最適化し、同一条件計測では某老舗コピーソフト比で約95.5%の転送性能を記録しました。<br>※ベリファイ無効・同一データセットでの計測結果<br><br>自動アップデート対応のため、基本的に最新版をご使用いただけます。</p>
       <div class="feature-wrap">
         <button
           id="feature-toggle-btn"
@@ -238,9 +238,19 @@
         items: [
           '同期元フォルダの変更を監視して、同期先へ自動反映',
           '作成・更新・削除・リネームをまとめて追従',
+          'リネーム後に同期先へ残った旧名の重複ファイルを自動で整理',
           '削除の扱いを選択可能（同期先も削除 / 同期先は保持）',
           '同じファイルは再コピーを抑えて無駄な上書きを回避',
           '大量変更時も取りこぼしを補完する再スキャンに対応'
+        ]
+      },
+      {
+        title: '画面・通知',
+        items: [
+          '同期中は、いまコピーしているファイルと全体の進み具合・残り時間・速度を表示',
+          '同期の履歴（コピー・リネーム追従）を新しい順に表示し、再起動後も保持',
+          '同期完了・リネーム処理完了を画面右下に通知（クリックで画面を表示）',
+          '設定は本体の横から開くパネルにまとめて表示'
         ]
       },
       {
@@ -249,7 +259,7 @@
           '転送エンジン最適化による高速コピー',
           'メモリ上限の調整で、環境に合わせて速度と負荷をバランス',
           '同一ディスク最適化・Google Drive最適化の切替',
-          '進捗・転送速度・理論比・ETAをリアルタイム表示'
+          '進捗・転送速度・平均速度・最大速度・残り時間をリアルタイム表示'
         ]
       },
       {
@@ -267,7 +277,8 @@
           'タスクトレイ常駐（最小化起動、閉じるで常駐は設定で有効化）',
           '曜日・時刻指定のタイマーで自動監視開始',
           '自動アップデート対応（更新通知・リリースノート表示）',
-          'ログ表示（フィルタ / 自動スクロール / エラー確認）'
+          'エクスプローラーと同じ画面で同期フォルダを選択（ファイルも表示）',
+          '詳細ログ表示（検索 / 自動スクロール / コピー）、ファイル保存にも対応（7日分）'
         ]
       }
     ];
