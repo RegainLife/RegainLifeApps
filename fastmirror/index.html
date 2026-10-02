@@ -8,13 +8,13 @@
   <link rel="stylesheet" href="../assets/screenshot-gallery.css" />
   <style>
     :root {
-      --bg: #0e1116;
-      --card: #15121f;
-      --fg: #e6edf3;
-      --muted: #9aa7b4;
-      --line: #2a2340;
-      --accent: #a78bfa;
-      --accent-hover: #c4b5fd;
+      --bg: #0b1020;
+      --card: #121a2e;
+      --fg: #dbe6ff;
+      --muted: #99a8c6;
+      --line: #283555;
+      --accent: #f472b6;
+      --accent-hover: #db2777;
     }
     * { box-sizing: border-box; }
     body {
@@ -66,58 +66,33 @@
       color: var(--muted);
       font-size: 14px;
     }
-    .features {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 12px;
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
     }
-    .feat {
-      background: linear-gradient(180deg, #1b1530 0%, #120e1f 100%);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px 16px 14px;
-      transition: border-color 0.15s ease, transform 0.15s ease;
-    }
-    .feat:hover {
-      border-color: #4b3a7a;
-      transform: translateY(-2px);
-    }
-    .feat-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 11px;
-      background: #2a1a45;
-    }
-    .feat-icon svg {
-      width: 20px;
-      height: 20px;
-      fill: none;
-      stroke: var(--accent);
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    .feat h3 {
-      margin: 12px 0 6px;
-      font-size: 16px;
-      color: #ffffff;
-      letter-spacing: 0.2px;
-    }
-    .feat p {
+    .hero-tagline {
       margin: 0;
-      font-size: 13.5px;
-      line-height: 1.7;
       color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
     }
-    .feat .feat-note {
-      margin-top: 6px;
-      font-size: 11.5px;
-      color: #6b7886;
-    }    .card {      margin-top: 18px;
+    .sub p {
+      margin: 0 0 12px;
+    }
+    .sub p:last-child {
+      margin-bottom: 0;
+    }
+    .sub-line {
+      display: block;
+    }
+    .sub-note {
+      font-size: 12px;
+      color: #99a8c6;
+    }
+    .card {      margin-top: 18px;
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: 14px;
@@ -131,7 +106,7 @@
       align-items: center;
       gap: 8px;
       border: 1px solid var(--line);
-      background: #1a1430;
+      background: #0f1933;
       color: var(--fg);
       border-radius: 10px;
       padding: 10px 14px;
@@ -153,7 +128,7 @@
       margin-top: 10px;
       border: 1px solid var(--line);
       border-radius: 12px;
-      background: #120e1f;
+      background: #0f1730;
       padding: 14px;
     }
     .feature-title {
@@ -165,7 +140,7 @@
     }
     .feature-section h3 {
       margin: 0 0 4px 0;
-      color: #c4b5fd;
+      color: #b6c8ee;
       font-size: 13px;
     }
     .feature-list {
@@ -189,19 +164,19 @@
     th {
       color: var(--muted);
       font-weight: 700;
-      background: #1a1430;
+      background: #111f44;
     }
     tr:last-child td { border-bottom: 0; }
     code {
       font-family: Consolas, monospace;
       font-size: 12px;
-      color: #c4b5fd;
+      color: #c5d6ff;
       word-break: break-all;
     }
     .btn {
       display: inline-block;
       text-decoration: none;
-      color: #1e1033;
+      color: #2a0a1c;
       background: var(--accent);
       border-radius: 8px;
       padding: 8px 12px;
@@ -234,19 +209,27 @@
 
     <section class="hero">
       <div class="hero-title">
-        <img class="hero-logo" src="./favicon.ico" alt="" aria-hidden="true" />
-        <h1>Fast Mirror</h1>
+        <img class="hero-logo" src="./favicon.ico?v=0.5.0" alt="" aria-hidden="true" />
+        <div class="hero-copy">
+          <h1>Fast Mirror</h1>
+          <p class="hero-tagline">Windows向けフォルダ同期アプリ</p>
+        </div>
       </div>
-      <p class="sub">フォルダを見張って、変更があればすぐ同期先へコピーする Windows 向けのフォルダ同期アプリです。設定したら、あとは常駐させておくだけ。</p>
-      <div class="features">
-        <article class="feat"><span class="feat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><h3>速い</h3><p>転送エンジンを徹底的に最適化。同一条件の計測で、某老舗コピーソフト比 約95.5%の転送性能を記録しました。</p><p class="feat-note">※ベリファイ無効・同一データセットでの計測結果</p></article>
-        <article class="feat"><span class="feat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4c-6 0-11 4-12 10l-3 6"/><path d="M8 14c4 0 8-2 10-6"/><path d="M12 10h5"/></svg></span><h3>軽い</h3><p>インストール不要の exe 1つ（約8MB）。常駐中は、ファイルの変更があったとき以外は CPU 使用率ほぼ 0%。</p></article>
-        <article class="feat"><span class="feat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/><path d="M12 16v4"/><path d="M7 10l2.5 2.5L15 7"/></svg></span><h3>見やすい</h3><p>同期中のファイル・残り時間・速度と、今日の同期の履歴がひと目でわかる画面。同期が終わると右下に完了通知が出ます。</p></article>
-        <article class="feat"><span class="feat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><h3>賢い</h3><p>作成・更新・削除だけでなくリネームにも追従。リネーム後に残った古い名前の重複ファイルも自動で整理します。</p></article>
-        <article class="feat"><span class="feat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a5 5 0 0 1-.5-10A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9z"/></svg></span><h3>Google Drive に強い</h3><p>一時ファイルの除外、1日 750GB のアップロード上限ガード、失敗時の自動再試行、件数が多いときの ZIP 集約に対応。</p></article>
-        <article class="feat"><span class="feat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.5-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.5 4.5L20 16"/><path d="M20 20v-4h-4"/></svg></span><h3>いつも最新</h3><p>自動アップデート対応。更新内容は、更新後の初回起動時にお知らせします。</p></article>
-      </div>
-      <div class="feature-wrap">
+      <div class="sub">
+        <p>
+          <span class="sub-line">Fast Mirrorは、フォルダの変更を監視して、同期先へ自動でコピーする無料のフォルダ同期アプリです。</span>
+          <span class="sub-line">インストール不要の exe 1つ（約8MB）で動き、タスクトレイに常駐している間は、変更があったとき以外 CPU 使用率はほぼ0%です。</span>
+        </p>
+        <p>
+          <span class="sub-line">転送エンジンを徹底的に最適化し、同一条件の計測では某老舗コピーソフト比 約95.5%の<strong>転送性能</strong>を記録しました。</span>
+          <span class="sub-line">作成・更新・削除だけでなくリネームにも追従し、リネーム後に同期先へ残った古い名前の重複ファイルも自動で整理します。</span>
+        </p>
+        <p>
+          <span class="sub-line">v0.5.0 で画面を一新し、同期中のファイル・残り時間・速度や<strong>同期の履歴</strong>がひと目でわかるようになりました。同期が終わると画面右下に<strong>完了通知</strong>が出ます。</span>
+          <span class="sub-line">Google Drive / GWS 向けの最適化（一時ファイルの除外・1日750GBの上限ガード・自動再試行）と、自動アップデートにも対応しています。</span>
+        </p>
+        <p class="sub-note">※ 転送性能は、ベリファイ無効・同一データセットでの計測結果です。</p>
+      </div>      <div class="feature-wrap">
         <button
           id="feature-toggle-btn"
           class="feature-toggle-btn"
