@@ -3,17 +3,17 @@
     {
       "title": "メイン画面",
       "alt": "FastMirrorのメイン画面。同期の状況と同期の履歴を表示",
-      "src": "./screenshots/fastmirror-main.png?v=20261003-1"
+      "src": "./screenshots/fastmirror-main.png?v=20261003-2"
     },
     {
       "title": "設定画面と詳細ログ",
       "alt": "本体の横に開いた設定画面と、メイン画面の詳細ログ表示",
-      "src": "./screenshots/fastmirror-settings.png?v=20261003-1"
+      "src": "./screenshots/fastmirror-settings.png?v=20261003-2"
     },
     {
       "title": "同期完了の通知",
       "alt": "同期が終わると画面右下に表示される完了通知",
-      "src": "./screenshots/fastmirror-toast.png?v=20261003-1"
+      "src": "./screenshots/fastmirror-toast.png?v=20261003-2"
     }
   ]
 }
