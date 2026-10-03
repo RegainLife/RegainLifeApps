@@ -194,9 +194,20 @@
     }
     .links a:hover { text-decoration: underline; }
     .muted { color: var(--muted); }
-    .speed-head { padding: 16px 16px 6px; }
-    .speed-head h2 { margin: 0 0 6px 0; font-size: 16px; }
-    .speed-lead { margin: 0; font-size: 13px; color: var(--muted); }
+    /* 速度比較は更新履歴と同じく、見出しのクリックで開閉する */
+    .speed-toggle {
+      display: flex; align-items: center; gap: 12px; width: 100%;
+      padding: 14px 18px; border: 0; background: transparent; color: var(--fg);
+      font: inherit; text-align: left; cursor: pointer; user-select: none;
+    }
+    .speed-toggle:hover { background: #162040; }
+    .speed-arrow { flex: 0 0 auto; font-size: 12px; color: var(--muted); transition: transform 0.18s ease; }
+    .speed-card.open .speed-arrow { transform: rotate(90deg); }
+    .speed-title { font-weight: 700; font-size: 15px; white-space: nowrap; }
+    .speed-summary { color: var(--muted); font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .speed-body { display: none; border-top: 1px solid var(--line); }
+    .speed-card.open .speed-body { display: block; }
+    .speed-lead { margin: 0; padding: 12px 16px 8px; font-size: 13px; color: var(--muted); }
     .speed-wrap { overflow-x: auto; }
     .speed-table th, .speed-table td { padding: 9px 12px; font-size: 13px; white-space: nowrap; }
     .speed-table .num { text-align: right; font-variant-numeric: tabular-nums; }
@@ -209,6 +220,7 @@
       .speed-table th:nth-child(n), .speed-table td:nth-child(n) {
         display: table-cell;
       }
+      .speed-summary { display: none; }
       h1 { font-size: 24px; }
       .hero-logo { width: 30px; height: 30px; }
     }
@@ -258,11 +270,14 @@
       </div>
     </section>
 
-    <section class="card speed-card">
-      <div class="speed-head">
-        <h2>robocopy との速度比較（v0.5.1）</h2>
-        <p class="speed-lead">同じ PC・同じデータで、Windows 標準のコピーコマンド robocopy と比べた結果です。単位は MB/s（大きいほど速い）。</p>
-      </div>
+    <section class="card speed-card" id="speed-card">
+      <button type="button" class="speed-toggle" id="speed-toggle" aria-expanded="false" aria-controls="speed-body">
+        <span class="speed-arrow">&#9654;</span>
+        <span class="speed-title">robocopy との速度比較（v0.5.1）</span>
+        <span class="speed-summary">8GB を約 3,500MB/s でコピー・標準の robocopy の約 1.3〜4 倍</span>
+      </button>
+      <div class="speed-body" id="speed-body">
+      <p class="speed-lead">同じ PC・同じデータで、Windows 標準のコピーコマンド robocopy と比べた結果です。単位は MB/s（大きいほど速い）。</p>
       <div class="speed-wrap">
         <table class="speed-table">
           <thead>
@@ -292,6 +307,7 @@
         FastMirror は監視を開始してから同期が完了するまで、robocopy はコマンドの開始から終了までの時間で計算しています。毎回コピー先を空にし、実行する順番を入れ替えて計測しました。NVMe → NVMe は 3 回の中央値、HDD と Google ドライブは 1 回の値です。混在は 64MB × 20 本・4MB × 400 本・64KB × 5,000 本です。<br />
         速さはパソコンやドライブ、ファイルの構成によって変わります。HDD への書き込みは、Windows のキャッシュに入った時点の速さを含みます。
       </p>
+      </div>
     </section>
 
     <section class="card">
@@ -319,6 +335,14 @@
   </main>
 
   <script>
+    (() => {
+      const card = document.getElementById('speed-card');
+      const btn = document.getElementById('speed-toggle');
+      btn.addEventListener('click', () => {
+        const open = card.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(open));
+      });
+    })();
     const DL_CACHE_KEY = 'fastmirror_dl_counts_v1';
     const FEATURE_SECTIONS = [
       {
