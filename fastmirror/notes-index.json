@@ -1,5 +1,11 @@
 [
   {
+    "version": "v0.5.1",
+    "date": "2026-10-03",
+    "file": "fastmirror/notes/v0.5.1.md",
+    "summary": "コピーの速さを大きく改善しました。NVMe SSD どうしでは、大きなファイルを約 4,100MB/s でコピーできます（前のバージョンは約 2,300MB/s）。"
+  },
+  {
     "version": "v0.5.0",
     "date": "2026-10-03",
     "file": "fastmirror/notes/v0.5.0.md",
