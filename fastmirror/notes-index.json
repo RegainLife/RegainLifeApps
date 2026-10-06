@@ -1,5 +1,11 @@
 [
   {
+    "version": "v0.6.2",
+    "date": "2026-10-06",
+    "file": "fastmirror/notes/v0.6.2.md",
+    "summary": "FastMirror が予期せず終了したとき、次の起動で詳細ログにお知らせするようにしました。原因を調べるための記録も残します。"
+  },
+  {
     "version": "v0.6.1",
     "date": "2026-10-05",
     "file": "fastmirror/notes/v0.6.1.md",

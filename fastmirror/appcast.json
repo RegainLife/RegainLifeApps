@@ -1,8 +1,8 @@
 {
   "channel": "stable",
-  "version": "0.6.1",
-  "url": "https://github.com/RegainLife/RegainLifeApps/releases/download/v0.6.1/FastMirror.exe",
-  "sha256": "e1dd0c6b5a4189d5799827656a02636214f2420e3c35dbc89dfd4698a2a10cb2",
-  "notes_url": "https://regainlife.github.io/RegainLifeApps/fastmirror/notes/v0.6.1.md",
-  "published_at": "2026-10-05T17:41:12+09:00"
+  "version": "0.6.2",
+  "url": "https://github.com/RegainLife/RegainLifeApps/releases/download/v0.6.2/FastMirror.exe",
+  "sha256": "20875812d8980c89e342cbc6322407c6c560ab5fe5cc9d3d48c4b88b9de04481",
+  "notes_url": "https://regainlife.github.io/RegainLifeApps/fastmirror/notes/v0.6.2.md",
+  "published_at": "2026-10-06T09:14:27+09:00"
 }
