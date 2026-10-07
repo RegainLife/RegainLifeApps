@@ -1,5 +1,11 @@
 [
   {
+    "version": "v0.6.3",
+    "date": "2026-10-07",
+    "file": "fastmirror/notes/v0.6.3.md",
+    "summary": "PC の起動直後に FastMirror が先に立ち上がると、「起動時に監視開始」がオンでも監視が始まらないことがあったのを直しました。"
+  },
+  {
     "version": "v0.6.2",
     "date": "2026-10-06",
     "file": "fastmirror/notes/v0.6.2.md",
