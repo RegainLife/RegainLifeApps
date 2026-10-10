@@ -62,13 +62,7 @@ function renderGuest() {
       }
     },
   });
-  ui.body().replaceChildren(
-    el("div", { class: "opinion-row opinion-start" },
-      btn,
-      el("a", { class: "opinion-hint", href: "./privacy.html", text: "プライバシーポリシー" }),
-    ),
-    status,
-  );
+  ui.body().replaceChildren(el("div", {}, btn), status);
 }
 
 function renderWho(user, label) {
