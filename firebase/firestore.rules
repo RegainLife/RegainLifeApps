@@ -1,0 +1,112 @@
+rules_version = '2';
+
+// RegainLife Apps TOP のアクセスカウンタと意見箱のルール。
+// Firebase コンソール → Firestore Database → ルール に貼り付けて公開する。
+//
+// コレクション:
+//   stats/visits      { total }                         累計訪問数（誰でも読める・1ずつしか増やせない）
+//   daily/{yyyymmdd}  { count }                         日本時間の当日の訪問数
+//   opinions/{id}     { uid, email, app, text, createdAt, reply? }
+//                                                       意見。本人と開発者だけが読める
+//   limits/{uid}      { last, day, count }              送信間隔（1分）と1日の件数（10件）の記録
+//   admins/{uid}      {}                                開発者。コンソールから手で作る（ページからは書けない）
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // 日本時間の今日を 20261011 の形の整数で返す
+    function todayInt() {
+      let t = request.time + duration.value(9, 'h');
+      return t.year() * 10000 + t.month() * 100 + t.day();
+    }
+
+    function apps() {
+      return ['SpiceClock', 'CalendarJP', 'Fast Mirror', 'Quark Timer', 'その他'];
+    }
+
+    match /stats/visits {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['total'])
+        && request.resource.data.total == 1;
+      allow update: if request.resource.data.keys().hasOnly(['total'])
+        && request.resource.data.total == resource.data.total + 1;
+    }
+
+    match /daily/{day} {
+      allow read: if true;
+      allow create: if day == string(todayInt())
+        && request.resource.data.keys().hasOnly(['count'])
+        && request.resource.data.count == 1;
+      allow update: if day == string(todayInt())
+        && request.resource.data.keys().hasOnly(['count'])
+        && request.resource.data.count == resource.data.count + 1;
+    }
+
+    match /admins/{uid} {
+      allow get: if signedIn() && request.auth.uid == uid;
+    }
+
+    match /limits/{uid} {
+      function own() {
+        return signedIn() && request.auth.uid == uid;
+      }
+      function shapeOk() {
+        let d = request.resource.data;
+        return d.keys().hasAll(['last', 'day', 'count'])
+          && d.keys().hasOnly(['last', 'day', 'count'])
+          && d.last == request.time
+          && d.day == todayInt();
+      }
+
+      allow get: if own();
+      allow create: if own() && shapeOk() && request.resource.data.count == 1;
+      allow update: if own() && shapeOk()
+        && request.time > resource.data.last + duration.value(60, 's')
+        && (
+          (resource.data.day == todayInt()
+            && request.resource.data.count == resource.data.count + 1
+            && request.resource.data.count <= 10)
+          || (resource.data.day != todayInt() && request.resource.data.count == 1)
+        );
+    }
+
+    match /opinions/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+
+      // 送信と同じ書き込みで limits/{uid} を更新したときだけ通す（間隔と件数の制限を必ず通らせる）
+      allow create: if signedIn()
+        && request.auth.token.email_verified == true
+        && request.resource.data.keys().hasAll(['uid', 'email', 'app', 'text', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'app', 'text', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.app in apps()
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 2000
+        && request.resource.data.createdAt == request.time
+        && getAfter(/databases/$(database)/documents/limits/$(request.auth.uid)).data.last == request.time;
+
+      // 開発者は返信だけ書ける
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reply'])
+        && request.resource.data.reply.keys().hasAll(['text', 'at'])
+        && request.resource.data.reply.keys().hasOnly(['text', 'at'])
+        && request.resource.data.reply.text is string
+        && request.resource.data.reply.text.size() > 0
+        && request.resource.data.reply.text.size() <= 4000
+        && request.resource.data.reply.at == request.time;
+
+      allow delete: if isAdmin();
+    }
+
+    // ここに書いていない場所はすべて読み書き禁止
+  }
+}
