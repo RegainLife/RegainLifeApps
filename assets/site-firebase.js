@@ -1,44 +1,18 @@
-// TOP ページのアクセスカウンタと意見箱。
+// TOP ページの意見・要望の受け付け（アクセスカウンタは visit-counter.js）。
 // 保存先は Firebase（Firestore）。読み書きできる範囲は firebase/firestore.rules で決めている。
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, orderBy, limit,
-  startAfter, getDocs, writeBatch, increment, serverTimestamp,
+  doc, getDoc, updateDoc, collection, query, where, orderBy, limit,
+  startAfter, getDocs, writeBatch, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { app, db, todayInt } from "./firebase-app.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyClHNM6NiSrKjbx9mN20TJAUU-_frs4kxA",
-  authDomain: "regainlifeapps.firebaseapp.com",
-  projectId: "regainlifeapps",
-  storageBucket: "regainlifeapps.firebasestorage.app",
-  messagingSenderId: "1039843521111",
-  appId: "1:1039843521111:web:5b1634cd669ebb1e17a912",
-};
-
-// カウンタを置く前の訪問数。Google 検索からのクリック数（Search Console、2026年4月30日〜）。
-const VISITS_BEFORE_COUNTER = 295;
 const APPS = ["SpiceClock", "CalendarJP", "Fast Mirror", "Quark Timer", "その他"];
 const ADMIN_PAGE_SIZE = 20;
 
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
-
-// 日本時間の今日を 20261011 の形で返す（ルール側の todayInt() と同じ計算）
-function todayInt() {
-  const t = new Date(Date.now() + 9 * 3600 * 1000);
-  return t.getUTCFullYear() * 10000 + (t.getUTCMonth() + 1) * 100 + t.getUTCDate();
-}
-
-function storageGet(key) {
-  try { return localStorage.getItem(key); } catch { return null; }
-}
-function storageSet(key, value) {
-  try { localStorage.setItem(key, value); } catch { /* 保存できなくても数えるだけ */ }
-}
 
 function formatDate(ts) {
   if (!ts || typeof ts.toDate !== "function") return "";
@@ -58,42 +32,7 @@ function el(tag, props = {}, ...children) {
   return node;
 }
 
-// ---- アクセスカウンタ ----
-
-async function runCounter() {
-  const box = document.getElementById("visit-counter");
-  if (!box) return;
-  const day = todayInt();
-  const dailyRef = doc(db, "daily", String(day));
-  const totalRef = doc(db, "stats", "visits");
-
-  // 同じブラウザからは1日1回だけ数える
-  if (storageGet("rl-visit-day") !== String(day)) {
-    try {
-      await Promise.all([
-        setDoc(totalRef, { total: increment(1) }, { merge: true }),
-        setDoc(dailyRef, { count: increment(1) }, { merge: true }),
-      ]);
-      storageSet("rl-visit-day", String(day));
-    } catch (e) {
-      console.warn("訪問数を数えられませんでした", e);
-    }
-  }
-
-  try {
-    const [totalSnap, dailySnap] = await Promise.all([getDoc(totalRef), getDoc(dailyRef)]);
-    const total = VISITS_BEFORE_COUNTER + (totalSnap.exists() ? totalSnap.data().total : 0);
-    const today = dailySnap.exists() ? dailySnap.data().count : 0;
-    document.getElementById("visit-total").textContent = total.toLocaleString("ja-JP");
-    document.getElementById("visit-today").textContent = today.toLocaleString("ja-JP");
-    box.hidden = false;
-  } catch (e) {
-    // 無料枠の上限などで読めないときはカウンタごと出さない
-    console.warn("訪問数を読めませんでした", e);
-  }
-}
-
-// ---- 意見箱 ----
+// ---- 意見・要望 ----
 
 const ui = {
   who: () => document.getElementById("opinion-who"),
@@ -312,5 +251,4 @@ function runOpinionBox() {
   });
 }
 
-runCounter();
 runOpinionBox();
