@@ -12,6 +12,7 @@
       --fg: #dbe6ff;
       --muted: #99a8c6;
       --line: #283555;
+      --accent: #6ea8ff;
     }
     * { box-sizing: border-box; }
     body {
@@ -137,17 +138,176 @@
       color: var(--muted);
       margin: 0 0 12px 2px;
     }
+    .site-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .visit-counter {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .visit-total {
+      font-size: 26px;
+      font-weight: 700;
+    }
+    .visit-total small {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+    .visit-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    [hidden] { display: none !important; }
+
+    .opinion-box {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .opinion-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .opinion-head h2 { margin: 0; font-size: 18px; }
+    .opinion-who {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .opinion-lead {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 64ch;
+    }
+    .opinion-lead a { color: var(--accent); }
+    .btn {
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 10px 16px;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: #162040;
+      color: var(--fg);
+    }
+    .btn:disabled { opacity: .6; cursor: default; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+    .btn.small { font-size: 12px; padding: 5px 10px; font-weight: 500; }
+    .btn.link {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 400;
+      text-decoration: underline;
+    }
+    .btn:focus-visible, .opinion-box select:focus-visible, .opinion-box textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .opinion-form { display: flex; flex-direction: column; gap: 8px; }
+    .opinion-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .opinion-box select, .opinion-box textarea {
+      font: inherit;
+      font-size: 13px;
+      color: var(--fg);
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+    .opinion-box textarea { width: 100%; min-height: 84px; resize: vertical; }
+    .opinion-hint { margin: 0; font-size: 11px; line-height: 1.6; color: var(--muted); }
+    .opinion-start { justify-content: flex-start; gap: 16px; }
+    .opinion-status { margin: 0; font-size: 12px; color: var(--muted); }
+    .opinion-status.is-error { color: #ff8a8a; }
+    .opinion-list { display: flex; flex-direction: column; gap: 10px; }
+    .opinion-list h3 {
+      margin: 6px 0 0;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: var(--muted);
+    }
+    .opinion-item {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+    .opinion-item p, .opinion-reply p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .opinion-meta { font-size: 11px; color: var(--muted); }
+    .opinion-reply {
+      background: #2a1f3d;
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .site-footer {
+      margin-top: 28px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+    .site-footer a { color: var(--muted); }
     @media (max-width: 600px) {
       .site-title { font-size: 24px; }
       .app-grid { grid-template-columns: 1fr; }
+      .visit-counter { text-align: left; }
     }
   </style>
 </head>
 <body>
   <main class="wrap">
     <header class="site-header">
-      <h1 class="site-title">RegainLife Apps</h1>
-      <p class="site-sub">Windows 向けデスクトップアプリの公開ページです。</p>
+      <div>
+        <h1 class="site-title">RegainLife Apps</h1>
+        <p class="site-sub">Windows 向けデスクトップアプリの公開ページです。</p>
+      </div>
+      <div class="visit-counter" id="visit-counter" aria-label="訪問者数" hidden>
+        <div class="visit-total"><span id="visit-total"></span><small>人以上</small></div>
+        <div class="visit-meta">2026年4月〜の累計 ・ 今日 <span id="visit-today"></span>人</div>
+      </div>
     </header>
 
     <p class="section-label">公開アプリ</p>
@@ -234,6 +394,24 @@
       </a>
 
     </div>
+
+    <section class="opinion-box" id="opinion" aria-labelledby="opinion-h">
+      <div class="opinion-head">
+        <h2 id="opinion-h">意見・要望はこちら</h2>
+        <div class="opinion-who" id="opinion-who"></div>
+      </div>
+      <p class="opinion-lead">
+        不具合の報告や要望をお寄せください。書いた内容はあなたと開発者にしか見えません。
+      </p>
+      <div id="opinion-body">
+        <noscript><p class="opinion-status">意見・要望を送るには JavaScript を有効にしてください。</p></noscript>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <a href="./privacy.html">プライバシーポリシー</a>
+    </footer>
   </main>
+  <script type="module" src="./assets/site-firebase.js"></script>
 </body>
 </html>
