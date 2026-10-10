@@ -138,32 +138,6 @@
       color: var(--muted);
       margin: 0 0 12px 2px;
     }
-    .site-header {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px 24px;
-      align-items: flex-end;
-      justify-content: space-between;
-    }
-    .visit-counter {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-    .visit-total {
-      font-size: 26px;
-      font-weight: 700;
-    }
-    .visit-total small {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
-      margin-left: 4px;
-    }
-    .visit-meta {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
     [hidden] { display: none !important; }
 
     .opinion-box {
@@ -287,27 +261,24 @@
       margin-top: 28px;
       font-size: 12px;
       color: var(--muted);
-      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      justify-content: center;
     }
     .site-footer a { color: var(--muted); }
+    .visit-counter { font-variant-numeric: tabular-nums; }
     @media (max-width: 600px) {
       .site-title { font-size: 24px; }
       .app-grid { grid-template-columns: 1fr; }
-      .visit-counter { text-align: left; }
     }
   </style>
 </head>
 <body>
   <main class="wrap">
     <header class="site-header">
-      <div>
-        <h1 class="site-title">RegainLife Apps</h1>
-        <p class="site-sub">Windows 向けデスクトップアプリの公開ページです。</p>
-      </div>
-      <div class="visit-counter" id="visit-counter" aria-label="訪問者数" hidden>
-        <div class="visit-total"><span id="visit-total"></span><small>人以上</small></div>
-        <div class="visit-meta">2026年4月〜の累計 ・ 今日 <span id="visit-today"></span>人</div>
-      </div>
+      <h1 class="site-title">RegainLife Apps</h1>
+      <p class="site-sub">Windows 向けデスクトップアプリの公開ページです。</p>
     </header>
 
     <p class="section-label">公開アプリ</p>
@@ -409,6 +380,7 @@
     </section>
 
     <footer class="site-footer">
+      <span class="visit-counter" id="visit-counter" hidden>アクセスカウンタ：<span id="visit-total"></span>人　本日：<span id="visit-today"></span>人</span>
       <a href="./privacy.html">プライバシーポリシー</a>
     </footer>
   </main>
