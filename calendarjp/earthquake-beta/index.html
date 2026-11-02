@@ -122,6 +122,29 @@
     }
     .btn:hover { background: var(--accent-hover); color: #fff; }
     .muted { color: var(--muted); }
+    .version-cell { white-space: nowrap; }
+    .like-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 18px;
+      border: 1px solid var(--line);
+      background: #0f1933;
+      color: var(--fg);
+      border-radius: 6px;
+      padding: 1px 6px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      vertical-align: 1px;
+      cursor: pointer;
+    }
+    .like-btn:hover { border-color: var(--accent); color: #fff; }
+    .like-heart { font-size: 13px; line-height: 1; }
+    .like-count { color: var(--muted); font-weight: 600; }
+    .like-btn[aria-pressed="true"] { border-color: var(--accent); cursor: default; }
+    .like-btn[aria-pressed="true"] .like-heart { color: var(--accent); }
+    .like-btn[aria-pressed="true"] .like-count { color: var(--fg); }
     .screenshot-strip {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -185,6 +208,8 @@
   <script>
     const BETA_TAG = 'calendarjp-v1.6B';
     const BETA_SHA256 = '092df3243acb69bfe3f905b5026df549477afffe55224ffc6b51d723bd5ae962';
+    const LIKE_PAGE = 'calendarjp-earthquake-beta';
+    const LIKE_STORAGE_KEY = 'rl-like-' + LIKE_PAGE;
 
     function escapeHtml(value) {
       return String(value)
@@ -206,15 +231,59 @@
         const published = String(release.published_at || '').slice(0, 10) || '-';
         body.innerHTML = `
           <tr>
-            <td><strong>v1.6B</strong></td>
+            <td class="version-cell"><strong>v1.6B</strong><button id="like-btn" class="like-btn" type="button" aria-pressed="false" aria-label="いいね" title="いいね"><span id="like-heart" class="like-heart">&#9825;</span><span id="like-count" class="like-count">0</span></button></td>
             <td>${escapeHtml(published)}</td>
             <td>${asset ? `<a class="btn" href="${escapeHtml(asset.browser_download_url)}" aria-label="v1.6B の CalendarJPSetup.exe をダウンロード">DL</a>` : '-'}</td>
             <td><strong>${asset ? Number(asset.download_count || 0).toLocaleString() : '-'}</strong></td>
             <td><code title="${escapeHtml(BETA_SHA256)}">${escapeHtml(BETA_SHA256.slice(0, 16))}${BETA_SHA256 ? '...' : ''}</code></td>
           </tr>
         `;
+        initLikeButton();
       } catch (err) {
         body.innerHTML = `<tr><td colspan="5" class="muted">リリース情報の取得に失敗しました: ${escapeHtml(String(err))}</td></tr>`;
+      }
+    }
+
+    // いいねは同じブラウザから1回だけ。数は firestore.rules の likes/{page} に保存する
+    async function initLikeButton() {
+      const button = document.getElementById('like-btn');
+      const heart = document.getElementById('like-heart');
+      const countText = document.getElementById('like-count');
+      let count = 0;
+      const show = pressed => {
+        button.setAttribute('aria-pressed', String(pressed));
+        heart.innerHTML = pressed ? '&#9829;' : '&#9825;';
+        countText.textContent = count.toLocaleString();
+      };
+      const wasLiked = () => {
+        try { return localStorage.getItem(LIKE_STORAGE_KEY) === '1'; } catch (_) { return false; }
+      };
+      show(wasLiked());
+
+      try {
+        const [{ db }, firestore] = await Promise.all([
+          import('../../assets/firebase-app.js'),
+          import('https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js'),
+        ]);
+        const likeRef = firestore.doc(db, 'likes', LIKE_PAGE);
+        button.addEventListener('click', async () => {
+          if (button.getAttribute('aria-pressed') === 'true') return;
+          count += 1;
+          show(true);
+          try {
+            await firestore.setDoc(likeRef, { count: firestore.increment(1) }, { merge: true });
+            try { localStorage.setItem(LIKE_STORAGE_KEY, '1'); } catch (_) {}
+          } catch (e) {
+            console.warn('いいねを保存できませんでした', e);
+            count -= 1;
+            show(false);
+          }
+        });
+        const snapshot = await firestore.getDoc(likeRef);
+        count = snapshot.exists() ? Number(snapshot.data().count || 0) : 0;
+        show(button.getAttribute('aria-pressed') === 'true');
+      } catch (e) {
+        console.warn('いいねの数を読めませんでした', e);
       }
     }
 

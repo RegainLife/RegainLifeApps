@@ -6,6 +6,7 @@ rules_version = '2';
 // コレクション:
 //   stats/visits      { total }                         累計訪問数（誰でも読める・1ずつしか増やせない）
 //   daily/{yyyymmdd}  { count }                         日本時間の当日の訪問数
+//   likes/{page}      { count }                         ページのいいね数（誰でも読める・1ずつしか増やせない）
 //   opinions/{id}     { uid, email, app, text, createdAt, reply? }
 //                                                       意見。本人と開発者だけが読める
 //   limits/{uid}      { last, day, count }              送信間隔（1分）と1日の件数（10件）の記録
@@ -45,6 +46,16 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['count'])
         && request.resource.data.count == 1;
       allow update: if day == string(todayInt())
+        && request.resource.data.keys().hasOnly(['count'])
+        && request.resource.data.count == resource.data.count + 1;
+    }
+
+    match /likes/{page} {
+      allow read: if page == 'calendarjp-earthquake-beta';
+      allow create: if page == 'calendarjp-earthquake-beta'
+        && request.resource.data.keys().hasOnly(['count'])
+        && request.resource.data.count == 1;
+      allow update: if page == 'calendarjp-earthquake-beta'
         && request.resource.data.keys().hasOnly(['count'])
         && request.resource.data.count == resource.data.count + 1;
     }
