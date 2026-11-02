@@ -429,7 +429,7 @@
             <th>Version</th>
             <th>Published</th>
             <th>Download</th>
-            <th>DL Count</th>
+            <th>Total DL</th>
             <th>Release Notes</th>
             <th>SHA-256</th>
           </tr>
@@ -563,13 +563,19 @@
     }
 
     async function loadDownloadCounts() {
-      const url = 'https://api.github.com/repos/RegainLife/RegainLifeApps/releases';
-      const resp = await fetch(url, { cache: 'no-store' });
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      const releases = await resp.json();
+      const url = 'https://api.github.com/repos/RegainLife/RegainLifeApps/releases?per_page=100';
+      const releases = [];
+      for (let page = 1; ; page++) {
+        const resp = await fetch(`${url}&page=${page}`, { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const items = await resp.json();
+        if (!Array.isArray(items)) break;
+        releases.push(...items);
+        if (items.length < 100) break;
+      }
       const result = {};
-      if (!Array.isArray(releases)) return result;
       for (const rel of releases) {
+        if (rel.prerelease) continue;
         const raw = String(rel.tag_name || '').trim();
         const tag = raw.replace(/^calendarjp-/, '');
         if (!tag) continue;
@@ -685,16 +691,19 @@
         const cachedMap = loadCountCache();
         const countMap = liveCountMap ? mergeCountMap(cachedMap, liveCountMap) : cachedMap;
         if (liveCountMap) saveCountCache(countMap);
-        body.innerHTML = list.map(r => {
+        const totalValues = Object.values(countMap).map(Number).filter(n => Number.isFinite(n) && n >= 0);
+        const totalCount = totalValues.length ? totalValues.reduce((sum, n) => sum + n, 0).toLocaleString() : '-';
+        body.innerHTML = list.map((r, index) => {
           const sha = String(r.sha256 || '').slice(0, 16);
-          const n = Number(countMap[r.version]);
-          const versionCount = Number.isFinite(n) && n >= 0 ? n.toLocaleString() : '-';
+          const totalCell = index === 0
+            ? `<td rowspan="${list.length}" style="text-align: center; vertical-align: middle;"><strong>${totalCount}</strong></td>`
+            : '';
           return `
             <tr>
               <td><strong>${escapeHtml(r.version || '-')}</strong></td>
               <td>${escapeHtml(r.published_at || '-')}</td>
               <td>${r.download_url ? `<a class="btn" href="${escapeHtml(r.download_url)}" aria-label="${escapeHtml((r.version || '最新') + ' の CalendarJPSetup.exe をダウンロード')}" title="${escapeHtml((r.version || '最新') + ' の CalendarJPSetup.exe をダウンロード')}">DL</a>` : '-'}</td>
-              <td>${versionCount}</td>
+              ${totalCell}
               <td>${r.notes_url ? `<a href="${escapeHtml(r.notes_url)}">ノートを見る</a>` : '-'}</td>
               <td><code title="${escapeHtml(r.sha256 || '')}">${escapeHtml(sha)}${r.sha256 ? '...' : ''}</code></td>
             </tr>
