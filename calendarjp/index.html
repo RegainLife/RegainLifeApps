@@ -283,11 +283,6 @@
       font-weight: 700;
     }
     .beta-note a:hover { text-decoration: underline; }
-    .beta-count {
-      margin-left: 8px;
-      color: var(--muted);
-      font-size: 12px;
-    }
     .beta-note p {
       margin: 4px 0 0;
       color: var(--muted);
@@ -430,7 +425,6 @@
       </div>
       <div class="beta-note">
         <a href="./earthquake-beta/">地震速報機能テスト版</a>
-        <span id="beta-count" class="beta-count"></span>
         <p>地震速報機能はテスト中です、動作テスト期間が完了したら正式版としてリリース予定です</p>
       </div>
       <div class="feature-wrap">
@@ -591,14 +585,6 @@
       return merged;
     }
 
-    // テスト版のダウンロード数は Total DL に含めず、リンクの横に別に出す
-    function showBetaCount(release) {
-      const host = document.getElementById('beta-count');
-      if (!host) return;
-      const setup = (release.assets || []).find(a => String(a.name || '').toLowerCase() === 'calendarjpsetup.exe');
-      if (setup) host.textContent = `DL ${Number(setup.download_count || 0).toLocaleString()}`;
-    }
-
     async function loadDownloadCounts() {
       const url = 'https://api.github.com/repos/RegainLife/RegainLifeApps/releases?per_page=100';
       const releases = [];
@@ -612,10 +598,7 @@
       }
       const result = {};
       for (const rel of releases) {
-        if (rel.prerelease) {
-          if (rel.tag_name === 'calendarjp-v1.6B') showBetaCount(rel);
-          continue;
-        }
+        if (rel.prerelease) continue;
         const raw = String(rel.tag_name || '').trim();
         const tag = raw.replace(/^calendarjp-/, '');
         if (!tag) continue;
