@@ -1,0 +1,10 @@
+{
+  "items": [
+    { "title": "地震のときの地図（実際の地震の再生）", "alt": "地図の上で揺れと P 波・S 波の円が広がる様子", "src": "./screenshots/earthquake-map.gif" },
+    { "title": "地震速報のポップアップ", "alt": "設定地域の東京都に強い揺れへの警戒を知らせるポップアップ", "src": "./screenshots/alert.png" },
+    { "title": "カレンダー上部の地震の表示", "alt": "カレンダー上部に表示された予測震度、マグニチュード、震源地、発生時間", "src": "./screenshots/calendar-top.png" },
+    { "title": "震度マップ", "alt": "観測点の震度と設定地域の震度、震源の情報を表示した震度マップ", "src": "./screenshots/earthquake-map.png" },
+    { "title": "天気マップ", "alt": "全国の天気の地図と設定地域の週間天気", "src": "./screenshots/weather-map.png" },
+    { "title": "地震速報の設定", "alt": "アラート音、音量、ポップアップ、通知する震度の設定画面", "src": "./screenshots/settings.png" }
+  ]
+}
