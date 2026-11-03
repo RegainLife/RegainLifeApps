@@ -229,7 +229,9 @@
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const release = await resp.json();
         const asset = (release.assets || []).find(a => String(a.name).toLowerCase() === 'calendarjpsetup.exe');
-        const published = String(release.published_at || '').slice(0, 10) || '-';
+        // インストーラーを差し替えたときに日付が変わるよう、ファイルを登録した日時（日本時間）を出す
+        const uploaded = asset ? new Date(asset.updated_at || asset.created_at) : new Date(release.published_at);
+        const published = Number.isNaN(uploaded.getTime()) ? '-' : uploaded.toLocaleDateString('sv-SE', { timeZone: 'Asia/Tokyo' });
         body.innerHTML = `
           <tr>
             <td class="version-cell"><strong>v1.6B</strong><button id="like-btn" class="like-btn" type="button" aria-pressed="false" aria-label="いいね" title="いいね"><span id="like-heart" class="like-heart">&#9825;</span><span id="like-count" class="like-count">0</span></button></td>
