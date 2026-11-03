@@ -211,6 +211,10 @@
     const BETA_SHA256 = 'd10ed6b81ddd1890443005f6e242c401220d3b816eee9b99d7a3813b371d379c';
     const LIKE_PAGE = 'calendarjp-earthquake-beta';
     const LIKE_STORAGE_KEY = 'rl-like-' + LIKE_PAGE;
+    const FIRESTORE = 'https://firestore.googleapis.com/v1/projects/regainlifeapps/databases/(default)/documents';
+    const LIKE_DOCUMENT = `projects/regainlifeapps/databases/(default)/documents/likes/${LIKE_PAGE}`;
+    // 上書きで差し替えて消えたインストーラーのダウンロード数（最初のインストーラーの2回。2つ目は記録なし）
+    const EARLIER_DOWNLOADS = 2;
 
     function escapeHtml(value) {
       return String(value)
@@ -228,7 +232,10 @@
         }
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const release = await resp.json();
-        const asset = (release.assets || []).find(a => String(a.name).toLowerCase() === 'calendarjpsetup.exe');
+        // 差し替えのたびに日付付きの名前で追加するので、リンクは最新のファイル、DL はすべての合計
+        const setups = (release.assets || []).filter(a => /^calendarjpsetup.*\.exe$/i.test(String(a.name)));
+        const asset = setups.slice().sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)))[0];
+        const totalDownloads = setups.reduce((sum, a) => sum + Number(a.download_count || 0), EARLIER_DOWNLOADS);
         // インストーラーを差し替えたときに日付が変わるよう、ファイルを登録した日時（日本時間）を出す
         const uploaded = asset ? new Date(asset.updated_at || asset.created_at) : new Date(release.published_at);
         const published = Number.isNaN(uploaded.getTime()) ? '-' : uploaded.toLocaleDateString('sv-SE', { timeZone: 'Asia/Tokyo' });
@@ -237,7 +244,7 @@
             <td class="version-cell"><strong>v1.6B</strong><button id="like-btn" class="like-btn" type="button" aria-pressed="false" aria-label="いいね" title="いいね"><span id="like-heart" class="like-heart">&#9825;</span><span id="like-count" class="like-count">0</span></button></td>
             <td>${escapeHtml(published)}</td>
             <td>${asset ? `<a class="btn" href="${escapeHtml(asset.browser_download_url)}" aria-label="v1.6B の CalendarJPSetup.exe をダウンロード">DL</a>` : '-'}</td>
-            <td><strong>${asset ? Number(asset.download_count || 0).toLocaleString() : '-'}</strong></td>
+            <td><strong>${asset ? totalDownloads.toLocaleString() : '-'}</strong></td>
             <td><code title="${escapeHtml(BETA_SHA256)}">${escapeHtml(BETA_SHA256.slice(0, 16))}${BETA_SHA256 ? '...' : ''}</code></td>
           </tr>
         `;
@@ -263,27 +270,36 @@
       };
       show(wasLiked());
 
+      // Firebase のプログラムは追跡防止機能などで止められることがあるので、Firestore の REST API を直接使う
+      button.addEventListener('click', async () => {
+        if (button.getAttribute('aria-pressed') === 'true') return;
+        count += 1;
+        show(true);
+        try {
+          const resp = await fetch(`${FIRESTORE}:commit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ writes: [{ transform: { document: LIKE_DOCUMENT, fieldTransforms: [{ fieldPath: 'count', increment: { integerValue: '1' } }] } }] }),
+          });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          try { localStorage.setItem(LIKE_STORAGE_KEY, '1'); } catch (_) {}
+        } catch (e) {
+          console.warn('いいねを保存できませんでした', e);
+          count -= 1;
+          show(false);
+        }
+      });
+
       try {
-        const [{ db }, firestore] = await Promise.all([
-          import('../../assets/firebase-app.js'),
-          import('https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js'),
-        ]);
-        const likeRef = firestore.doc(db, 'likes', LIKE_PAGE);
-        button.addEventListener('click', async () => {
-          if (button.getAttribute('aria-pressed') === 'true') return;
-          count += 1;
-          show(true);
-          try {
-            await firestore.setDoc(likeRef, { count: firestore.increment(1) }, { merge: true });
-            try { localStorage.setItem(LIKE_STORAGE_KEY, '1'); } catch (_) {}
-          } catch (e) {
-            console.warn('いいねを保存できませんでした', e);
-            count -= 1;
-            show(false);
-          }
-        });
-        const snapshot = await firestore.getDoc(likeRef);
-        count = snapshot.exists() ? Number(snapshot.data().count || 0) : 0;
+        const resp = await fetch(`${FIRESTORE}/likes/${LIKE_PAGE}`, { cache: 'no-store' });
+        if (resp.status === 404) {
+          count = 0;
+        } else if (resp.ok) {
+          const json = await resp.json();
+          count = Number(json.fields?.count?.integerValue || 0);
+        } else {
+          throw new Error('HTTP ' + resp.status);
+        }
         show(button.getAttribute('aria-pressed') === 'true');
       } catch (e) {
         console.warn('いいねの数を読めませんでした', e);
