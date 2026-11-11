@@ -7,8 +7,10 @@ rules_version = '2';
 //   stats/visits      { total }                         累計訪問数（誰でも読める・1ずつしか増やせない）
 //   daily/{yyyymmdd}  { count }                         日本時間の当日の訪問数
 //   likes/{page}      { count }                         ページのいいね数（誰でも読める・1ずつしか増やせない）
-//   opinions/{id}     { uid, email, app, text, createdAt, editedAt?, reply? }
+//   opinions/{id}     { uid, email, app, text, createdAt, editedAt?, reply?, thread? }
 //                                                       意見。本人と開発者だけが読める
+//                                                       thread は { m0: { by, text, at }, m1: ... } の形で、
+//                                                       本人（by: 'user'）と開発者（by: 'dev'）が最後に1件ずつ足す
 //   limits/{uid}      { last, day, count }              送信間隔（1分）と1日の件数（10件）の記録
 //   admins/{uid}      {}                                開発者。コンソールから手で作る（ページからは書けない）
 service cloud.firestore {
@@ -123,6 +125,35 @@ service cloud.firestore {
         && request.resource.data.reply.text.size() > 0
         && request.resource.data.reply.text.size() <= 4000
         && request.resource.data.reply.at == request.time;
+
+      // スレッドの最後に 1 件だけ足す。番号は今の件数（m0, m1, ...）で、前の書き込みは変えられない
+      function threadAppendOk(by, maxLen) {
+        let old = resource.data.get('thread', {});
+        let key = 'm' + string(old.size());
+        let d = request.resource.data.thread.diff(old);
+        let m = request.resource.data.thread[key];
+        return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['thread'])
+          && old.size() < 100
+          && d.addedKeys().hasOnly([key])
+          && d.addedKeys().size() == 1
+          && d.changedKeys().size() == 0
+          && d.removedKeys().size() == 0
+          && m.keys().hasAll(['by', 'text', 'at'])
+          && m.keys().hasOnly(['by', 'text', 'at'])
+          && m.by == by
+          && m.text is string
+          && m.text.size() > 0
+          && m.text.size() <= maxLen
+          && m.at == request.time;
+      }
+
+      // 本人はスレッドに返信を足せる
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && threadAppendOk('user', 2000);
+
+      // 開発者はスレッドに返信を足せる
+      allow update: if isAdmin() && threadAppendOk('dev', 4000);
 
       allow delete: if isAdmin();
     }

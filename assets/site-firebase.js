@@ -82,15 +82,81 @@ function clearNew() {
 
 const millis = (ts) => ts?.toMillis?.() ?? 0;
 
-// 開発者: 新しく届いた意見と、修正された意見の数。初めてのブラウザでは返信していないものを数える
+// ---- スレッド（意見の下に続くやり取り） ----
+// opinions/{id}.thread は { m0: { by, text, at }, m1: ... } の形。by は "user"（送った人）か "dev"（開発者）
+
+const THREAD_MAX = 100;
+
+function threadList(m) {
+  const thread = m.thread || {};
+  return Object.keys(thread)
+    .filter((k) => /^m[0-9]+$/.test(k))
+    .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)))
+    .map((k) => thread[k]);
+}
+
+// 開発者が書いた時刻と、送った人が書いた時刻
+function devTimes(m) {
+  return [millis(m.reply?.at), ...threadList(m).filter((t) => t.by === "dev").map((t) => millis(t.at))];
+}
+function userTimes(m) {
+  return [millis(m.createdAt), millis(m.editedAt), ...threadList(m).filter((t) => t.by === "user").map((t) => millis(t.at))];
+}
+// 最後に書いたのが送った人（開発者の返事待ち）
+function waitingForDev(m) {
+  return Math.max(...userTimes(m)) > Math.max(...devTimes(m));
+}
+
+// いまの最後に 1 件足す。番号がずれないよう、足す直前に読み直す
+async function appendThread(id, by, text) {
+  const ref = doc(db, "opinions", id);
+  const fresh = (await getDoc(ref)).data();
+  const count = Object.keys(fresh.thread || {}).length;
+  if (count >= THREAD_MAX) throw new Error("thread-full");
+  await updateDoc(ref, { ["thread.m" + count]: { by, text, at: serverTimestamp() } });
+}
+
+function threadNodes(m, viewer) {
+  return threadList(m).map((t) => {
+    const who = t.by === "dev" ? "開発者より" : (viewer === "dev" ? "送った人より" : "あなた");
+    return el("div", { class: t.by === "dev" ? "opinion-reply" : "opinion-reply opinion-reply-user" },
+      el("div", { class: "opinion-meta", text: who + " ・ " + formatDate(t.at) }),
+      el("p", { text: t.text }),
+    );
+  });
+}
+
+// ---- 意見 1 件ごとの開閉 ----
+// 開いた意見は覚えておき、保存して描き直しても開いたままにする
+
+const openIds = new Set();
+
+function itemShell({ id, meta, preview, flag, open }, ...children) {
+  const summary = el("summary", { class: "opinion-summary" },
+    el("span", { text: meta }),
+    flag ? el("span", { class: "opinion-flag", text: flag }) : null,
+    el("span", { class: "opinion-preview", text: " ― " + preview.replace(/\s+/g, " ").slice(0, 80) }),
+  );
+  const body = el("div", { class: "opinion-item-body" }, ...children);
+  const item = el("details", { class: "opinion-item" }, summary, body);
+  if (open || openIds.has(id)) { item.open = true; openIds.add(id); }
+  item.addEventListener("toggle", () => {
+    if (item.open) openIds.add(id);
+    else openIds.delete(id);
+  });
+  return item;
+}
+
+// 開発者: 送った人からの新しい書き込み（意見・修正・スレッドの返信）がある意見の数。
+// 初めてのブラウザでは、返事待ちの意見を数える
 async function countAdminNew(user) {
   try {
     const seen = seenAt(user);
     const snap = await getDocs(query(collection(db, "opinions"), orderBy("createdAt", "desc"), limit(ADMIN_NEW_SCAN)));
     const items = snap.docs.map((d) => d.data());
     const count = seen
-      ? items.filter((m) => millis(m.createdAt) > seen || millis(m.editedAt) > seen).length
-      : items.filter((m) => !m.reply).length;
+      ? items.filter((m) => Math.max(...userTimes(m)) > seen).length
+      : items.filter(waitingForDev).length;
     reportNew(user, count);
   } catch (e) {
     console.warn(e);
@@ -226,7 +292,7 @@ async function renderUser(user) {
       el("div", { class: "opinion-row" }, status, send),
       el("p", {
         class: "opinion-hint",
-        text: "すべて読んでいますが、個別の返信はお約束できません。返信はこのページに表示されます（メールでのお知らせはありません）。送ったものは、あとから「修正する」で直せます。",
+        text: "すべて読んでいますが、個別の返信はお約束できません。返信はこのページに表示されます（メールでのお知らせはありません）。送ったものは、あとから「修正する」で直せます。返信が付いたら、その下に続けて書けます。",
       }),
     ),
     list,
@@ -239,13 +305,13 @@ async function loadMine(user, list) {
     const snap = await getDocs(query(collection(db, "opinions"), where("uid", "==", user.uid)));
     const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
-    // 本人: 前に見たあとに付いた（または直された）返信の数
+    // 本人: 前に見たあとに開発者が書いた（または直した）返信の数
     const seen = seenAt(user);
-    reportNew(user, items.filter((m) => m.reply && millis(m.reply.at) > seen).length);
+    reportNew(user, items.reduce((n, m) => n + devTimes(m).filter((t) => t > seen).length, 0));
     if (items.length === 0) { list.replaceChildren(); return; }
     list.replaceChildren(
       el("h3", { text: "あなたが送ったもの" }),
-      ...items.map((m) => mineItem(m, () => loadMine(user, list))),
+      ...items.map((m) => mineItem(m, seen, () => loadMine(user, list))),
     );
   } catch (e) {
     console.warn(e);
@@ -253,7 +319,7 @@ async function loadMine(user, list) {
   }
 }
 
-function mineItem(m, reload) {
+function mineItem(m, seen, reload) {
   const body = el("div");
   const showText = () => body.replaceChildren(
     el("p", { text: m.text }),
@@ -268,10 +334,35 @@ function mineItem(m, reload) {
     }),
   );
   showText();
-  return el("div", { class: "opinion-item" },
-    el("div", { class: "opinion-meta", text: `${m.app} ・ ${formatDate(m.createdAt)}${editedLabel(m.editedAt)}` }),
+
+  // 開発者の返信があれば「返信を書く」、まだなければ「追記する」
+  const answered = Boolean(m.reply) || threadList(m).some((t) => t.by === "dev");
+  const slot = el("div");
+  const showButton = () => slot.replaceChildren(el("button", {
+    class: "btn small", type: "button", text: answered ? "返信を書く" : "追記する",
+    onclick: () => slot.replaceChildren(editForm({
+      initial: "", maxlength: 2000, label: answered ? "返信" : "追記", saveText: "送る",
+      save: (text) => appendThread(m.id, "user", text),
+      onDone: reload,
+      onCancel: showButton,
+    })),
+  }));
+  showButton();
+
+  // 前に見たあとに開発者の返信が付いたものは、開いた状態で出す
+  const hasNew = devTimes(m).some((t) => t > seen);
+  return itemShell(
+    {
+      id: m.id,
+      meta: m.app + " ・ " + formatDate(m.createdAt) + editedLabel(m.editedAt),
+      preview: m.text,
+      flag: hasNew ? "新しい返信" : (answered ? "返信あり" : ""),
+      open: hasNew,
+    },
     body,
     replyNode(m.reply),
+    ...threadNodes(m, "user"),
+    slot,
   );
 }
 
@@ -305,47 +396,62 @@ async function renderAdmin(user) {
 }
 
 function adminItem(id, m) {
-  const slot = el("div");
   const ref = doc(db, "opinions", id);
+  let item = null;
+  // 保存したら読み直して、この 1 件を描き直す
+  const refresh = async () => item.replaceWith(adminItem(id, (await getDoc(ref)).data()));
 
-  const saveReply = async (text) => {
-    await updateDoc(ref, { reply: { text, at: serverTimestamp() } });
-    m.reply = (await getDoc(ref)).data().reply;
-  };
+  // 最初の返信（あとから修正できる）
+  const first = el("div");
+  const showFirst = () => first.replaceChildren(
+    replyNode(m.reply),
+    el("button", {
+      class: "btn small", type: "button", text: "返信を修正する",
+      onclick: () => first.replaceChildren(editForm({
+        initial: m.reply.text, maxlength: 4000, label: "返信の修正", saveText: "修正を保存",
+        save: (text) => updateDoc(ref, { reply: { text, at: serverTimestamp() } }),
+        onDone: refresh,
+        onCancel: showFirst,
+      })),
+    }),
+  );
+  if (m.reply) showFirst();
 
-  function showReply() {
-    if (!m.reply) {
-      slot.replaceChildren(el("button", {
-        class: "btn small", type: "button", text: "返信を書く（任意）",
-        onclick: () => showForm("", "返信する"),
-      }));
-      return;
-    }
-    slot.replaceChildren(
-      replyNode(m.reply),
-      el("button", {
-        class: "btn small", type: "button", text: "返信を修正する",
-        onclick: () => showForm(m.reply.text, "修正を保存"),
-      }),
-    );
-  }
-
-  function showForm(initial, saveText) {
-    slot.replaceChildren(
+  // 返信欄。まだ何も続いていなければ最初の返信として、続いていればスレッドの最後に足す
+  const started = Boolean(m.reply) || threadList(m).length > 0;
+  const slot = el("div");
+  const showButton = () => slot.replaceChildren(el("button", {
+    class: "btn small", type: "button", text: started ? "返信を書く" : "返信を書く（任意）",
+    onclick: () => slot.replaceChildren(
       editForm({
-        initial, maxlength: 4000, label: "返信", saveText,
-        save: saveReply, onDone: showReply, onCancel: showReply,
+        initial: "", maxlength: 4000, label: "返信", saveText: "返信する",
+        save: (text) => (started
+          ? appendThread(id, "dev", text)
+          : updateDoc(ref, { reply: { text, at: serverTimestamp() } })),
+        onDone: refresh,
+        onCancel: showButton,
       }),
       el("p", { class: "opinion-hint", text: "送った人にだけ見えます" }),
-    );
-  }
+    ),
+  }));
+  showButton();
 
-  showReply();
-  return el("div", { class: "opinion-item" },
-    el("div", { class: "opinion-meta", text: `${m.app} ・ ${formatDate(m.createdAt)}${editedLabel(m.editedAt)} ・ ${m.email}` }),
+  // 返事待ちのものは、開いた状態で出す
+  const waiting = waitingForDev(m);
+  item = itemShell(
+    {
+      id,
+      meta: m.app + " ・ " + formatDate(m.createdAt) + editedLabel(m.editedAt) + " ・ " + m.email,
+      preview: m.text,
+      flag: waiting ? "返事待ち" : "返信済み",
+      open: waiting,
+    },
     el("p", { text: m.text }),
+    first,
+    ...threadNodes(m, "dev"),
     slot,
   );
+  return item;
 }
 
 async function isAdmin(user) {

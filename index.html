@@ -264,12 +264,37 @@
       background: var(--bg);
       border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 10px 14px;
+      display: block;
+      min-width: 0;
+    }
+    .opinion-summary {
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .opinion-summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+    .opinion-flag {
+      margin-left: 8px;
+      padding: 1px 7px;
+      border-radius: 9px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 11px;
+    }
+    .opinion-preview { color: var(--fg); }
+    .opinion-item[open] .opinion-preview { display: none; }
+    .opinion-item-body {
       display: flex;
       flex-direction: column;
       gap: 8px;
+      margin-top: 10px;
       min-width: 0;
     }
+    .opinion-reply-user { background: #17233f; }
     .opinion-item p, .opinion-reply p {
       margin: 0;
       font-size: 13px;
