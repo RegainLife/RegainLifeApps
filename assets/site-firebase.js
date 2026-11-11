@@ -5,7 +5,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
   doc, getDoc, updateDoc, collection, query, where, orderBy, limit,
-  startAfter, getDocs, writeBatch, serverTimestamp,
+  startAfter, getDocs, writeBatch, serverTimestamp, deleteField,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { app, db, todayInt } from "./firebase-app.js";
 
@@ -311,7 +311,7 @@ async function sendOpinion(user, appName, text) {
   const batch = writeBatch(db);
   batch.set(limitRef, { last: serverTimestamp(), day, count });
   batch.set(doc(collection(db, "opinions")), {
-    uid: user.uid, email: user.email, app: appName, text, createdAt: serverTimestamp(),
+    uid: user.uid, app: appName, text, createdAt: serverTimestamp(),
   });
   await batch.commit();
 }
@@ -459,8 +459,15 @@ async function renderAdmin(user) {
   await Promise.all([loadPage(), countAdminNew(user)]);
 }
 
+// メールアドレスの代わりに出す印。同じ人からの意見かどうかを見分けるためだけのもの
+function userLabel(uid) {
+  return "アプリユーザー：" + String(uid || "").slice(0, 4).toLowerCase();
+}
+
 function adminItem(id, m) {
   const ref = doc(db, "opinions", id);
+  // 以前は意見と一緒にメールアドレスを保存していた。残っていたら消す
+  if (m.email) updateDoc(ref, { email: deleteField() }).catch((e) => console.warn(e));
   let item = null;
   // 保存したら読み直して、この 1 件を描き直す
   const refresh = async () => item.replaceWith(adminItem(id, (await getDoc(ref)).data()));
@@ -505,7 +512,7 @@ function adminItem(id, m) {
   item = itemShell(
     {
       id,
-      meta: m.app + " ・ " + formatDate(m.createdAt) + editedLabel(m.editedAt) + " ・ " + m.email,
+      meta: m.app + " ・ " + formatDate(m.createdAt) + editedLabel(m.editedAt) + " ・ " + userLabel(m.uid),
       preview: m.text,
       flag: waiting ? "返事待ち" : "返信済み",
       open: waiting,

@@ -7,8 +7,9 @@ rules_version = '2';
 //   stats/visits      { total }                         累計訪問数（誰でも読める・1ずつしか増やせない）
 //   daily/{yyyymmdd}  { count }                         日本時間の当日の訪問数
 //   likes/{page}      { count }                         ページのいいね数（誰でも読める・1ずつしか増やせない）
-//   opinions/{id}     { uid, email, app, text, createdAt, editedAt?, reply?, thread?, editKey? }
-//                                                       意見。本人と開発者だけが読める
+//   opinions/{id}     { uid, app, text, createdAt, editedAt?, reply?, thread?, editKey? }
+//                                                       意見。本人と開発者だけが読める。メールアドレスは保存しない
+//                                                       （以前の意見に残っている email は、開発者が開いたときに消す）
 //                                                       thread は { m0: { by, text, at }, m1: ... } の形で、
 //                                                       本人（by: 'user'）と開発者（by: 'dev'）が最後に1件ずつ足す。
 //                                                       自分が書いた1件は直せる・消せる（editKey に番号を書く。
@@ -98,10 +99,9 @@ service cloud.firestore {
       // 送信と同じ書き込みで limits/{uid} を更新したときだけ通す（間隔と件数の制限を必ず通らせる）
       allow create: if signedIn()
         && request.auth.token.email_verified == true
-        && request.resource.data.keys().hasAll(['uid', 'email', 'app', 'text', 'createdAt'])
-        && request.resource.data.keys().hasOnly(['uid', 'email', 'app', 'text', 'createdAt'])
+        && request.resource.data.keys().hasAll(['uid', 'app', 'text', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['uid', 'app', 'text', 'createdAt'])
         && request.resource.data.uid == request.auth.uid
-        && request.resource.data.email == request.auth.token.email
         && request.resource.data.app in apps()
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
@@ -117,6 +117,11 @@ service cloud.firestore {
         && request.resource.data.text.size() > 0
         && request.resource.data.text.size() <= 2000
         && request.resource.data.editedAt == request.time;
+
+      // 開発者は、以前の意見に残っているメールアドレスを消せる（消すだけで、書き込みはできない）
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['email'])
+        && !('email' in request.resource.data);
 
       // 開発者は返信だけ書ける（書き直しもできる）
       allow update: if isAdmin()
