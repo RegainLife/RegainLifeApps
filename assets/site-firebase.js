@@ -80,6 +80,40 @@ function replyNode(reply) {
   );
 }
 
+function editedLabel(ts) {
+  return ts ? ` ・ 修正 ${formatDate(ts)}` : "";
+}
+
+// 文章をその場で直すフォーム。save(text) が終わったら onDone を呼ぶ
+function editForm({ initial, maxlength, label, saveText, save, onDone, onCancel }) {
+  const ta = el("textarea", { maxlength: String(maxlength), "aria-label": label });
+  ta.value = initial;
+  const status = el("p", { class: "opinion-status" });
+  const cancel = el("button", { class: "btn small", type: "button", text: "やめる", onclick: onCancel });
+  const send = el("button", {
+    class: "btn primary small", type: "button", text: saveText,
+    onclick: async () => {
+      const text = ta.value.trim();
+      if (!text) { setStatus(status, "内容を書いてから保存してください。", true); return; }
+      if (text === initial) { onCancel(); return; }
+      send.disabled = true;
+      cancel.disabled = true;
+      try {
+        await save(text);
+        await onDone();
+      } catch (e) {
+        console.warn(e);
+        setStatus(status, "保存できませんでした。時間をおいてから、もう一度お試しください。", true);
+        send.disabled = false;
+        cancel.disabled = false;
+      }
+    },
+  });
+  const form = el("div", { class: "opinion-form" }, ta, el("div", { class: "opinion-row" }, status, el("div", { class: "opinion-row" }, cancel, send)));
+  queueMicrotask(() => ta.focus());
+  return form;
+}
+
 async function sendOpinion(user, appName, text) {
   const limitRef = doc(db, "limits", user.uid);
   const snap = await getDoc(limitRef);
@@ -133,7 +167,7 @@ async function renderUser(user) {
       el("div", { class: "opinion-row" }, status, send),
       el("p", {
         class: "opinion-hint",
-        text: "すべて読んでいますが、個別の返信はお約束できません。返信はこのページに表示されます（メールでのお知らせはありません）。",
+        text: "すべて読んでいますが、個別の返信はお約束できません。返信はこのページに表示されます（メールでのお知らせはありません）。送ったものは、あとから「修正する」で直せます。",
       }),
     ),
     list,
@@ -144,21 +178,39 @@ async function renderUser(user) {
 async function loadMine(user, list) {
   try {
     const snap = await getDocs(query(collection(db, "opinions"), where("uid", "==", user.uid)));
-    const items = snap.docs.map((d) => d.data())
+    const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
     if (items.length === 0) { list.replaceChildren(); return; }
     list.replaceChildren(
       el("h3", { text: "あなたが送ったもの" }),
-      ...items.map((m) => el("div", { class: "opinion-item" },
-        el("div", { class: "opinion-meta", text: `${m.app} ・ ${formatDate(m.createdAt)}` }),
-        el("p", { text: m.text }),
-        replyNode(m.reply),
-      )),
+      ...items.map((m) => mineItem(m, () => loadMine(user, list))),
     );
   } catch (e) {
     console.warn(e);
     list.replaceChildren(el("p", { class: "opinion-status is-error", text: "送ったものを読み込めませんでした。" }));
   }
+}
+
+function mineItem(m, reload) {
+  const body = el("div");
+  const showText = () => body.replaceChildren(
+    el("p", { text: m.text }),
+    el("button", {
+      class: "btn small", type: "button", text: "修正する",
+      onclick: () => body.replaceChildren(editForm({
+        initial: m.text, maxlength: 2000, label: "意見の内容の修正", saveText: "修正を保存",
+        save: (text) => updateDoc(doc(db, "opinions", m.id), { text, editedAt: serverTimestamp() }),
+        onDone: reload,
+        onCancel: showText,
+      })),
+    }),
+  );
+  showText();
+  return el("div", { class: "opinion-item" },
+    el("div", { class: "opinion-meta", text: `${m.app} ・ ${formatDate(m.createdAt)}${editedLabel(m.editedAt)}` }),
+    body,
+    replyNode(m.reply),
+  );
 }
 
 async function renderAdmin(user) {
@@ -191,41 +243,47 @@ async function renderAdmin(user) {
 }
 
 function adminItem(id, m) {
-  const item = el("div", { class: "opinion-item" },
-    el("div", { class: "opinion-meta", text: `${m.app} ・ ${formatDate(m.createdAt)} ・ ${m.email}` }),
-    el("p", { text: m.text }),
-  );
-  if (m.reply) { item.append(replyNode(m.reply)); return item; }
-
   const slot = el("div");
-  slot.append(el("button", {
-    class: "btn small", type: "button", text: "返信を書く（任意）",
-    onclick: () => {
-      const ta = el("textarea", { maxlength: "4000", "aria-label": "返信" });
-      const status = el("p", { class: "opinion-status", text: "送った人にだけ見えます" });
-      const send = el("button", {
-        class: "btn primary small", type: "button", text: "返信する",
-        onclick: async () => {
-          const text = ta.value.trim();
-          if (!text) return;
-          send.disabled = true;
-          try {
-            await updateDoc(doc(db, "opinions", id), { reply: { text, at: serverTimestamp() } });
-            const fresh = await getDoc(doc(db, "opinions", id));
-            slot.replaceWith(replyNode(fresh.data().reply));
-          } catch (e) {
-            console.warn(e);
-            setStatus(status, "返信を保存できませんでした。", true);
-            send.disabled = false;
-          }
-        },
-      });
-      slot.replaceChildren(el("div", { class: "opinion-form" }, ta, el("div", { class: "opinion-row" }, status, send)));
-      ta.focus();
-    },
-  }));
-  item.append(slot);
-  return item;
+  const ref = doc(db, "opinions", id);
+
+  const saveReply = async (text) => {
+    await updateDoc(ref, { reply: { text, at: serverTimestamp() } });
+    m.reply = (await getDoc(ref)).data().reply;
+  };
+
+  function showReply() {
+    if (!m.reply) {
+      slot.replaceChildren(el("button", {
+        class: "btn small", type: "button", text: "返信を書く（任意）",
+        onclick: () => showForm("", "返信する"),
+      }));
+      return;
+    }
+    slot.replaceChildren(
+      replyNode(m.reply),
+      el("button", {
+        class: "btn small", type: "button", text: "返信を修正する",
+        onclick: () => showForm(m.reply.text, "修正を保存"),
+      }),
+    );
+  }
+
+  function showForm(initial, saveText) {
+    slot.replaceChildren(
+      editForm({
+        initial, maxlength: 4000, label: "返信", saveText,
+        save: saveReply, onDone: showReply, onCancel: showReply,
+      }),
+      el("p", { class: "opinion-hint", text: "送った人にだけ見えます" }),
+    );
+  }
+
+  showReply();
+  return el("div", { class: "opinion-item" },
+    el("div", { class: "opinion-meta", text: `${m.app} ・ ${formatDate(m.createdAt)}${editedLabel(m.editedAt)} ・ ${m.email}` }),
+    el("p", { text: m.text }),
+    slot,
+  );
 }
 
 async function isAdmin(user) {

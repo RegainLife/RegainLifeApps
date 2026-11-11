@@ -7,7 +7,7 @@ rules_version = '2';
 //   stats/visits      { total }                         累計訪問数（誰でも読める・1ずつしか増やせない）
 //   daily/{yyyymmdd}  { count }                         日本時間の当日の訪問数
 //   likes/{page}      { count }                         ページのいいね数（誰でも読める・1ずつしか増やせない）
-//   opinions/{id}     { uid, email, app, text, createdAt, reply? }
+//   opinions/{id}     { uid, email, app, text, createdAt, editedAt?, reply? }
 //                                                       意見。本人と開発者だけが読める
 //   limits/{uid}      { last, day, count }              送信間隔（1分）と1日の件数（10件）の記録
 //   admins/{uid}      {}                                開発者。コンソールから手で作る（ページからは書けない）
@@ -105,7 +105,16 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time
         && getAfter(/databases/$(database)/documents/limits/$(request.auth.uid)).data.last == request.time;
 
-      // 開発者は返信だけ書ける
+      // 本人は本文だけ直せる（修正した時刻を editedAt に残す）
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'editedAt'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 2000
+        && request.resource.data.editedAt == request.time;
+
+      // 開発者は返信だけ書ける（書き直しもできる）
       allow update: if isAdmin()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reply'])
         && request.resource.data.reply.keys().hasAll(['text', 'at'])
