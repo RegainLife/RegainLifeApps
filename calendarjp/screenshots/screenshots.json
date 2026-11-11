@@ -14,6 +14,41 @@
       "title": "デザイン設定",
       "alt": "CalendarJPの表示位置や自由選択ピッカー付きデザイン設定画面",
       "src": "./screenshots/calendarjp-settings-design.png?v=20260502-3"
+    },
+    {
+      "title": "地震のときの地図（再生）",
+      "alt": "P 波・S 波の輪が広がり、輪が届いた市区町村から震度が塗られていく様子",
+      "src": "./screenshots/earthquake-map.gif?v=20261111-1"
+    },
+    {
+      "title": "地震速報のポップアップ",
+      "alt": "設定地域の東京都に揺れの到達を知らせるポップアップ",
+      "src": "./screenshots/earthquake-alert.png?v=20261111-1"
+    },
+    {
+      "title": "カレンダー上部の地震の表示",
+      "alt": "カレンダー上部に表示された震度、マグニチュード、震源地、発生時間",
+      "src": "./screenshots/earthquake-calendar-top.png?v=20261111-1"
+    },
+    {
+      "title": "震度マップ（揺れている間）",
+      "alt": "観測点の震度と、輪が届いた市区町村の震度の速報値",
+      "src": "./screenshots/earthquake-map.png?v=20261111-1"
+    },
+    {
+      "title": "震度マップ（各地の震度）",
+      "alt": "気象庁の各地の震度とユーザ体感を重ねた地図",
+      "src": "./screenshots/earthquake-quake-info.png?v=20261111-1"
+    },
+    {
+      "title": "天気マップと警報・注意報",
+      "alt": "全国の天気、週間天気、発表中の警報・注意報を重ねた地図",
+      "src": "./screenshots/weather-map.png?v=20261111-1"
+    },
+    {
+      "title": "地震速報の設定",
+      "alt": "アラート音、音量、ポップアップ、通知する震度、マップの文字の大きさの設定画面",
+      "src": "./screenshots/earthquake-settings.png?v=20261111-1"
     }
   ]
 }

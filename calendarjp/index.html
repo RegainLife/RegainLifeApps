@@ -33,7 +33,7 @@
     "keywords": "Windows 11 祝日カレンダー, タスクバー時計 カレンダー, 純正カレンダー 置き換え, Windows カレンダー 代替アプリ, 日本の祝日 カレンダー アプリ",
     "applicationCategory": "ProductivityApplication",
     "operatingSystem": "Windows 11",
-    "softwareVersion": "v1.5.1",
+    "softwareVersion": "v1.6.0",
     "inLanguage": "ja-JP",
     "isAccessibleForFree": true,
     "url": "https://regainlife.github.io/RegainLifeApps/calendarjp/",
@@ -41,16 +41,21 @@
     "screenshot": [
       "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-main.png?v=20260502-1",
       "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-settings-top.png?v=20260502-3",
-      "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-settings-design.png?v=20260502-3"
+      "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/calendarjp-settings-design.png?v=20260502-3",
+      "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/earthquake-alert.png?v=20261111-1",
+      "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/earthquake-map.png?v=20261111-1",
+      "https://regainlife.github.io/RegainLifeApps/calendarjp/screenshots/weather-map.png?v=20261111-1"
     ],
-    "downloadUrl": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.5.1/CalendarJPSetup.exe",
+    "downloadUrl": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.6.0/CalendarJPSetup.exe",
     "releaseNotes": "https://regainlife.github.io/RegainLifeApps/calendarjp/history.html",
-    "dateModified": "2026-05-02",
+    "dateModified": "2026-11-11",
     "description": "CalendarJPは、日本の祝日に対応した無料のカレンダーアプリです。Windows 11 の純正カレンダーを違和感なく置き換えて、祝日・天気・Google カレンダーの予定をひとつの画面で確認できます。",
     "featureList": [
       "日本の祝日と振替休日を表示",
       "Windows 11のタスクバー時計クリックで起動",
       "気象庁データによる天気表示",
+      "緊急地震速報のアラート音・ポップアップ・音声読み上げ",
+      "震度マップと天気マップ（週間天気・警報・注意報）",
       "GoogleカレンダーのiCal URL連携",
       "ドラッグで自由移動できる表示位置設定",
       "自由選択ピッカー付きのデザイン設定",
@@ -418,14 +423,14 @@
           <span class="sub-line">Google カレンダー（iCal URL）との連携、気象庁データによる<strong>天気表示</strong>（降水ナウキャスト含む）にも対応しています。</span>
           <span class="sub-line">v1.4以降からインストール式になり、自動アップデートにも対応しました。</span>
         </p>
+        <p>
+          <span class="sub-line">v1.6.0 から<strong>地震速報</strong>と<strong>週間天気・警報・注意報</strong>を統合しました。</span>
+          <span class="sub-line">緊急地震速報をアラート音・ポップアップ・音声で知らせ、震度マップと天気マップを開けます。</span>
+        </p>
         <p class="sub-note">※ .NET 9 ランタイムが必要です、見つからない場合は「.NET のインストールが必要です」と表示されるのでインストールしてください。</p>
         <p class="support-note">
           <button id="smartscreen-help-btn" class="support-link" type="button">※ インストール時にSmartScreen警告が出る場合</button>
         </p>
-      </div>
-      <div class="beta-note">
-        <a href="./earthquake-beta/">地震速報機能テスト版</a>
-        <p>地震速報機能はテスト中です、動作テスト期間が完了したら正式版としてリリース予定です</p>
       </div>
       <div class="feature-wrap">
         <button
@@ -520,6 +525,24 @@
           'JMA ナウキャストタイルを解析し「現在 強い雨」「25分後 小雨」などの降水コメントをリアルタイム表示',
           'Windows 位置情報サービスで現在地を自動取得（手動設定も可能）',
           '外部サービス登録・API キー不要（気象庁オープンデータを直接利用）'
+        ]
+      },
+      {
+        title: '地震速報（v1.6.0〜）',
+        items: [
+          '緊急地震速報を受信すると、設定地域に揺れが届く前にアラート音とポップアップで通知',
+          'アラート音のあとに最大震度・震源までの距離・到達までの時間を音声で読み上げ（声は4種類）',
+          '通知する震度・音量・ポップアップ・読み上げを設定で変更',
+          'カレンダー上部に震度・マグニチュード・震源地・発生時間を表示',
+          '震度マップに緊急地震速報（警報）・各地の震度・津波予報・ユーザ体感を重ねて表示'
+        ]
+      },
+      {
+        title: '週間天気・警報・注意報（v1.6.0〜）',
+        items: [
+          '天気マップに全国の天気と週間天気を表示',
+          '発表中の警報・注意報と河川の氾濫情報を地図に重ねて表示',
+          '天気・震度マップの文字の大きさを設定で変更'
         ]
       },
       {
