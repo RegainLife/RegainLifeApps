@@ -39,12 +39,71 @@ const ui = {
   body: () => document.getElementById("opinion-body"),
 };
 
+// ---- 新着の数（閉じていてもタイトルの横に出す） ----
+// 最後に意見板を開いて見た時刻をブラウザに覚えておき、それより新しいものを数える
+
+const ADMIN_NEW_SCAN = 50;
+let seenKey = null;
+
+function panelOpen() {
+  const panel = document.getElementById("opinion-panel");
+  return !panel || !panel.hidden;
+}
+
+function seenAt(user) {
+  try { return Number(localStorage.getItem(`opinion-seen-${user.uid}`)) || 0; } catch { return 0; }
+}
+
+function showBadge(count) {
+  const badge = document.getElementById("opinion-badge");
+  if (!badge) return;
+  badge.hidden = count <= 0;
+  badge.textContent = count > 99 ? "99+" : String(count);
+  badge.setAttribute("aria-label", `新着 ${count} 件`);
+}
+
+function markSeen() {
+  if (!seenKey) return;
+  try { localStorage.setItem(seenKey, String(Date.now())); } catch { /* 覚えられなくても動かす */ }
+  showBadge(0);
+}
+
+// 開いていれば見たことにし、閉じていれば数を出す
+function reportNew(user, count) {
+  seenKey = `opinion-seen-${user.uid}`;
+  if (panelOpen()) markSeen();
+  else showBadge(count);
+}
+
+function clearNew() {
+  seenKey = null;
+  showBadge(0);
+}
+
+const millis = (ts) => ts?.toMillis?.() ?? 0;
+
+// 開発者: 新しく届いた意見と、修正された意見の数。初めてのブラウザでは返信していないものを数える
+async function countAdminNew(user) {
+  try {
+    const seen = seenAt(user);
+    const snap = await getDocs(query(collection(db, "opinions"), orderBy("createdAt", "desc"), limit(ADMIN_NEW_SCAN)));
+    const items = snap.docs.map((d) => d.data());
+    const count = seen
+      ? items.filter((m) => millis(m.createdAt) > seen || millis(m.editedAt) > seen).length
+      : items.filter((m) => !m.reply).length;
+    reportNew(user, count);
+  } catch (e) {
+    console.warn(e);
+  }
+}
+
 function setStatus(node, text, isError = false) {
   node.textContent = text;
   node.classList.toggle("is-error", isError);
 }
 
 function renderGuest() {
+  clearNew();
   ui.who().replaceChildren();
   const status = el("p", { class: "opinion-status" });
   const btn = el("button", {
@@ -180,6 +239,9 @@ async function loadMine(user, list) {
     const snap = await getDocs(query(collection(db, "opinions"), where("uid", "==", user.uid)));
     const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+    // 本人: 前に見たあとに付いた（または直された）返信の数
+    const seen = seenAt(user);
+    reportNew(user, items.filter((m) => m.reply && millis(m.reply.at) > seen).length);
     if (items.length === 0) { list.replaceChildren(); return; }
     list.replaceChildren(
       el("h3", { text: "あなたが送ったもの" }),
@@ -239,7 +301,7 @@ async function renderAdmin(user) {
     }
   }
   more.addEventListener("click", loadPage);
-  await loadPage();
+  await Promise.all([loadPage(), countAdminNew(user)]);
 }
 
 function adminItem(id, m) {
@@ -296,6 +358,10 @@ async function isAdmin(user) {
 
 function runOpinionBox() {
   if (!document.getElementById("opinion-body")) return;
+  // 開閉は index.html 側で先に処理される。開いたら見たことにする
+  document.getElementById("opinion-toggle")?.addEventListener("click", () => {
+    if (panelOpen()) markSeen();
+  });
   onAuthStateChanged(auth, async (user) => {
     if (!user) { renderGuest(); return; }
     if (await isAdmin(user)) await renderAdmin(user);

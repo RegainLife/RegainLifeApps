@@ -173,6 +173,20 @@
     .opinion-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
     .opinion-arrow { font-size: 11px; color: var(--muted); transition: transform .15s ease; }
     .opinion-toggle[aria-expanded="false"] .opinion-arrow { transform: rotate(-90deg); }
+    .opinion-badge {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      box-sizing: border-box;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #0b1020;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 20px;
+      text-align: center;
+    }
+    .opinion-badge[hidden] { display: none; }
     .opinion-panel { display: flex; flex-direction: column; gap: 14px; }
     .opinion-panel[hidden] { display: none; }
     .opinion-who {
@@ -387,6 +401,7 @@
           <button class="opinion-toggle" id="opinion-toggle" type="button" aria-expanded="true" aria-controls="opinion-panel">
             <span class="opinion-arrow" aria-hidden="true">&#9660;</span>
             <span>意見・要望はこちら</span>
+            <span class="opinion-badge" id="opinion-badge" hidden></span>
           </button>
         </h2>
         <div class="opinion-who" id="opinion-who"></div>
