@@ -132,6 +132,39 @@
     };
     gallery.querySelector('.screenshot-strip-prev').addEventListener('click', () => slide(-1));
     gallery.querySelector('.screenshot-strip-next').addEventListener('click', () => slide(1));
+    // マウスでもつかんで左右に送れるようにする（タッチはブラウザのスワイプに任せる）
+    let drag = null;
+    let dragged = false;
+    strip.addEventListener('pointerdown', event => {
+      dragged = false;
+      if (event.pointerType !== 'mouse' || event.button !== 0) return;
+      drag = { x: event.clientX, left: strip.scrollLeft, moved: false };
+    });
+    window.addEventListener('pointermove', event => {
+      if (!drag) return;
+      const dx = event.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) < 5) return;
+      drag.moved = true;
+      strip.classList.add('is-dragging');
+      strip.scrollLeft = drag.left - dx;
+    });
+    const endDrag = () => {
+      if (!drag) return;
+      dragged = drag.moved;
+      drag = null;
+      strip.classList.remove('is-dragging');
+    };
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+    // つかんで送ったあとの離す動きで、画像の拡大が開かないようにする
+    strip.addEventListener('click', event => {
+      if (!dragged) return;
+      dragged = false;
+      event.preventDefault();
+      event.stopPropagation();
+    }, true);
+    strip.addEventListener('dragstart', event => event.preventDefault());
+
     strip.addEventListener('scroll', updateEdges, { passive: true });
     window.addEventListener('resize', updateEdges);
 

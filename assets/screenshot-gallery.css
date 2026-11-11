@@ -25,6 +25,15 @@
 .screenshot-strip::-webkit-scrollbar {
   display: none;
 }
+/* マウスでつかんで送っている間 */
+.screenshot-strip.is-dragging {
+  scroll-snap-type: none;
+  user-select: none;
+  cursor: grabbing;
+}
+.screenshot-strip.is-dragging .screenshot-thumb {
+  cursor: grabbing;
+}
 .screenshot-strip-nav {
   appearance: none;
   display: none;
