@@ -92,7 +92,7 @@ function threadList(m) {
   return Object.keys(thread)
     .filter((k) => /^m[0-9]+$/.test(k))
     .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)))
-    .map((k) => thread[k]);
+    .map((k) => ({ key: k, ...thread[k] }));
 }
 
 // 開発者が書いた時刻と、送った人が書いた時刻
@@ -116,13 +116,77 @@ async function appendThread(id, by, text) {
   await updateDoc(ref, { ["thread.m" + count]: { by, text, at: serverTimestamp() } });
 }
 
-function threadNodes(m, viewer) {
+// 自分が書いた 1 件を直す・消す。editKey でどれを変えるかをルールに伝える。
+// 消しても番号は詰めず、「削除しました」の印だけ残す
+function editThread(id, key, text) {
+  return updateDoc(doc(db, "opinions", id), {
+    editKey: key,
+    ["thread." + key + ".text"]: text,
+    ["thread." + key + ".editedAt"]: serverTimestamp(),
+  });
+}
+function deleteThread(id, key) {
+  return updateDoc(doc(db, "opinions", id), {
+    editKey: key,
+    ["thread." + key + ".text"]: "",
+    ["thread." + key + ".deleted"]: true,
+    ["thread." + key + ".editedAt"]: serverTimestamp(),
+  });
+}
+
+// viewer は "user" か "dev"。自分が書いたものにだけ「修正」「削除」を出す
+function threadNodes(m, viewer, id, reload) {
   return threadList(m).map((t) => {
     const who = t.by === "dev" ? "開発者より" : (viewer === "dev" ? "送った人より" : "あなた");
-    return el("div", { class: t.by === "dev" ? "opinion-reply" : "opinion-reply opinion-reply-user" },
-      el("div", { class: "opinion-meta", text: who + " ・ " + formatDate(t.at) }),
-      el("p", { text: t.text }),
-    );
+    const node = el("div", { class: t.by === "dev" ? "opinion-reply" : "opinion-reply opinion-reply-user" });
+    if (t.deleted) {
+      node.append(el("div", { class: "opinion-meta", text: who + " ・ " + formatDate(t.at) + " ・ 削除しました" }));
+      return node;
+    }
+    const meta = el("div", { class: "opinion-meta", text: who + " ・ " + formatDate(t.at) + editedLabel(t.editedAt) });
+    const show = () => {
+      node.replaceChildren(meta, el("p", { text: t.text }));
+      if (t.by !== viewer) return;
+      const status = el("span", { class: "opinion-status" });
+      const actions = el("div", { class: "opinion-row opinion-actions" });
+      const normal = () => actions.replaceChildren(
+        el("button", {
+          class: "btn link", type: "button", text: "修正",
+          onclick: () => node.replaceChildren(meta, editForm({
+            initial: t.text, maxlength: viewer === "dev" ? 4000 : 2000, label: "返信の修正", saveText: "修正を保存",
+            save: (text) => editThread(id, t.key, text),
+            onDone: reload,
+            onCancel: show,
+          })),
+        }),
+        el("button", {
+          class: "btn link", type: "button", text: "削除",
+          onclick: () => actions.replaceChildren(
+            el("span", { class: "opinion-status", text: "この返信を削除しますか？" }),
+            el("button", {
+              class: "btn link", type: "button", text: "削除する",
+              onclick: async (event) => {
+                event.target.disabled = true;
+                try {
+                  await deleteThread(id, t.key);
+                  await reload();
+                } catch (e) {
+                  console.warn(e);
+                  normal();
+                  setStatus(status, "削除できませんでした。", true);
+                  actions.append(status);
+                }
+              },
+            }),
+            el("button", { class: "btn link", type: "button", text: "やめる", onclick: normal }),
+          ),
+        }),
+      );
+      normal();
+      node.append(actions);
+    };
+    show();
+    return node;
   });
 }
 
@@ -361,7 +425,7 @@ function mineItem(m, seen, reload) {
     },
     body,
     replyNode(m.reply),
-    ...threadNodes(m, "user"),
+    ...threadNodes(m, "user", m.id, reload),
     slot,
   );
 }
@@ -448,7 +512,7 @@ function adminItem(id, m) {
     },
     el("p", { text: m.text }),
     first,
-    ...threadNodes(m, "dev"),
+    ...threadNodes(m, "dev", id, refresh),
     slot,
   );
   return item;
