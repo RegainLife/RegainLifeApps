@@ -8,12 +8,69 @@
   font-weight: 700;
   letter-spacing: 0.04em;
 }
+.screenshot-strip-wrap {
+  position: relative;
+}
+/* スクロールバーは出さない。スマホはスワイプ、PC は両端の ‹ › で送る */
 .screenshot-strip {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  padding: 2px 2px 8px;
-  scrollbar-width: thin;
+  padding: 2px;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.screenshot-strip::-webkit-scrollbar {
+  display: none;
+}
+.screenshot-strip-nav {
+  appearance: none;
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(7, 11, 22, 0.76);
+  color: var(--fg);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+}
+.screenshot-strip-nav:hover {
+  border-color: var(--accent);
+  background: rgba(18, 26, 46, 0.94);
+}
+.screenshot-strip-prev {
+  left: 0;
+}
+.screenshot-strip-next {
+  right: 0;
+}
+/* マウスで使う画面だけ: 続きがある側の端を透明にぼかし、‹ › を出す */
+@media (hover: hover) and (pointer: fine) {
+  .screenshot-strip {
+    --fade-left: 0px;
+    --fade-right: 0px;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-left), #000 calc(100% - var(--fade-right)), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-left), #000 calc(100% - var(--fade-right)), transparent 100%);
+  }
+  .screenshot-strip-wrap.can-prev .screenshot-strip {
+    --fade-left: 64px;
+  }
+  .screenshot-strip-wrap.can-next .screenshot-strip {
+    --fade-right: 64px;
+  }
+  .screenshot-strip-wrap.can-prev .screenshot-strip-prev,
+  .screenshot-strip-wrap.can-next .screenshot-strip-next {
+    display: block;
+  }
 }
 .screenshot-thumb {
   appearance: none;
@@ -27,6 +84,7 @@
   cursor: pointer;
   overflow: hidden;
   text-align: left;
+  scroll-snap-align: start;
 }
 .screenshot-thumb:hover {
   border-color: var(--accent);

@@ -100,7 +100,11 @@
     gallery.className = 'screenshot-gallery';
     gallery.innerHTML = `
       <p class="screenshot-gallery-title">画面プレビュー</p>
-      <div class="screenshot-strip"></div>
+      <div class="screenshot-strip-wrap">
+        <button class="screenshot-strip-nav screenshot-strip-prev" type="button" aria-label="前の画像へ送る">&#8249;</button>
+        <div class="screenshot-strip"></div>
+        <button class="screenshot-strip-nav screenshot-strip-next" type="button" aria-label="次の画像へ送る">&#8250;</button>
+      </div>
     `;
 
     const strip = gallery.querySelector('.screenshot-strip');
@@ -116,7 +120,24 @@
       strip.appendChild(button);
     }
 
+    // 続きがある側だけ、端のぼかしと ‹ › を出す
+    const wrap = gallery.querySelector('.screenshot-strip-wrap');
+    const updateEdges = () => {
+      const max = strip.scrollWidth - strip.clientWidth;
+      wrap.classList.toggle('can-prev', strip.scrollLeft > 4);
+      wrap.classList.toggle('can-next', strip.scrollLeft < max - 4);
+    };
+    const slide = direction => {
+      strip.scrollBy({ left: direction * Math.max(160, strip.clientWidth * 0.8), behavior: 'smooth' });
+    };
+    gallery.querySelector('.screenshot-strip-prev').addEventListener('click', () => slide(-1));
+    gallery.querySelector('.screenshot-strip-next').addEventListener('click', () => slide(1));
+    strip.addEventListener('scroll', updateEdges, { passive: true });
+    window.addEventListener('resize', updateEdges);
+
     sub.insertAdjacentElement('afterend', gallery);
+    updateEdges();
+    if ('ResizeObserver' in window) new ResizeObserver(updateEdges).observe(strip);
   }
 
   if (document.readyState === 'loading') {
