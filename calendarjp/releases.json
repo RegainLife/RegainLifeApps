@@ -1,5 +1,13 @@
 [
   {
+    "version": "v1.6.1",
+    "published_at": "2026-11-13",
+    "notes_url": "./history.html?v=1.6.1#v1.6.1",
+    "notes_md_url": "./notes/v1.6.1.md",
+    "download_url": "https://github.com/RegainLife/RegainLifeApps/releases/download/calendarjp-v1.6.1/CalendarJPSetup.exe",
+    "sha256": "069e5b3f1cefa0b601afafc0fd6b36e0402265269f9780cb6328f522c8a41b13"
+  },
+  {
     "version": "v1.6.0",
     "published_at": "2026-11-11",
     "notes_url": "./history.html?v=1.6.0#v1.6.0",
