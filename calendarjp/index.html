@@ -323,12 +323,9 @@
     }
     /* スクリーンショットの ‹ › と同じ細い矢印。閉じているときは下向き、開くと上向き */
     .feature-toggle-btn .arrow {
-      display: inline-block;
+      flex: none;
       width: 12px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: 300;
-      line-height: 14px;
+      height: 12px;
       transform: rotate(90deg);
       transition: transform 0.18s ease;
     }
@@ -490,16 +487,16 @@
       <div class="feature-wrap">
         <div class="hero-buttons">
           <button id="feature-toggle-btn" class="feature-toggle-btn" type="button" aria-expanded="false" aria-controls="feature-panel">
-            <span class="arrow">&#8250;</span>
+            <svg class="arrow" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2 L8.5 6 L4.5 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <span>機能一覧</span>
           </button>
           <button id="guide-toggle-btn" class="feature-toggle-btn" type="button" aria-expanded="false" aria-controls="guide-panel">
-            <span class="arrow">&#8250;</span>
+            <svg class="arrow" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2 L8.5 6 L4.5 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <span>使い方・よくある質問</span>
           </button>
           <a class="feature-toggle-btn" href="./history.html">
             <span>更新履歴</span>
-            <span class="arrow arrow-right">&#8250;</span>
+            <svg class="arrow arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2 L8.5 6 L4.5 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
         </div>
         <div id="feature-panel" class="feature-panel" hidden>
