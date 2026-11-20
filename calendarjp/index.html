@@ -362,6 +362,35 @@
       background: #111f44;
     }
     tr:last-child td { border-bottom: 0; }
+    .total-cell { text-align: center; vertical-align: middle; }
+    /* リリース一覧の折りたたみ（閉じている間は最新版だけを枠で囲み、下の行を影とフェードで覗かせる） */
+    .release-wrap { position: relative; transition: max-height 0.35s ease, border-color 0.3s ease, background-color 0.3s ease; }
+    .release-wrap.is-collapsible { cursor: pointer; }
+    .release-wrap.is-collapsible:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .release-wrap table { position: relative; z-index: 1; }
+    .release-wrap.is-collapsed { border-color: transparent; background-color: transparent; }
+    .release-wrap.is-collapsed .total-cell { vertical-align: top; text-align: left; }
+    .release-wrap tbody tr:first-child td { transition: border-color 0.3s ease; }
+    .release-wrap.is-collapsed tbody tr:first-child td { border-bottom-color: transparent; }
+    .release-frame-bg, .release-frame, .release-shade {
+      position: absolute;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .release-frame-bg, .release-frame { top: 0; border-radius: 13px; }
+    .release-frame-bg { z-index: 0; background: var(--card); box-shadow: 0 12px 22px rgba(0, 0, 0, 0.7); }
+    .release-frame { z-index: 3; border: 1px solid var(--line); }
+    .release-shade {
+      bottom: 0;
+      z-index: 2;
+      background: linear-gradient(to bottom, rgba(11, 16, 32, 0.4), rgba(11, 16, 32, 0.8) 40%, rgba(11, 16, 32, 1) 85%);
+    }
+    .release-wrap.is-collapsed .release-frame-bg,
+    .release-wrap.is-collapsed .release-frame,
+    .release-wrap.is-collapsed .release-shade { opacity: 1; }
     code {
       font-family: Consolas, monospace;
       font-size: 12px;
@@ -462,7 +491,8 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card release-wrap" id="release-wrap">
+      <div class="release-frame-bg" id="release-frame-bg"></div>
       <table>
         <thead>
           <tr>
@@ -478,6 +508,8 @@
           <tr><td colspan="6" class="muted">読み込み中...</td></tr>
         </tbody>
       </table>
+      <div class="release-shade" id="release-shade"></div>
+      <div class="release-frame" id="release-frame"></div>
     </section>
 
     <details class="card guide">
@@ -763,6 +795,72 @@
       });
     }
 
+    // リリース一覧を最新版だけに折りたたみ、リンク以外のクリックで開閉する
+    function initReleaseCollapse() {
+      const wrap = document.getElementById('release-wrap');
+      const body = document.getElementById('release-body');
+      const shade = document.getElementById('release-shade');
+      const frame = document.getElementById('release-frame');
+      const frameBg = document.getElementById('release-frame-bg');
+      const totalCell = body.querySelector('.total-cell');
+      const PEEK_ROWS = 4;
+      if (!wrap || wrap.dataset.collapseReady || body.rows.length < 2) return;
+      wrap.dataset.collapseReady = '1';
+      wrap.classList.add('is-collapsible', 'is-collapsed');
+      wrap.tabIndex = 0;
+      wrap.setAttribute('role', 'button');
+      wrap.setAttribute('aria-expanded', 'false');
+      wrap.setAttribute('aria-label', '過去のバージョンを表示');
+
+      // 閉じた高さを計算し、枠・フェード・合計の位置を 1 行目に合わせる
+      function layoutCollapsed() {
+        const first = body.rows[0];
+        const top = first.offsetTop + first.offsetHeight;
+        shade.style.top = top + 'px';
+        frame.style.height = frameBg.style.height = top + 'px';
+        if (totalCell && totalCell.firstElementChild) {
+          totalCell.style.paddingTop = '';
+          const pad = (first.offsetHeight - totalCell.firstElementChild.offsetHeight) / 2;
+          totalCell.style.paddingTop = Math.max(0, pad) + 'px';
+        }
+        const last = body.rows[Math.min(PEEK_ROWS, body.rows.length - 1)];
+        return last.offsetTop + last.offsetHeight;
+      }
+      function setCollapsed(collapsed) {
+        wrap.setAttribute('aria-expanded', String(!collapsed));
+        if (collapsed) {
+          wrap.style.maxHeight = wrap.scrollHeight + 'px';
+          void wrap.offsetHeight;
+          wrap.classList.add('is-collapsed');
+          wrap.style.maxHeight = layoutCollapsed() + 'px';
+        } else {
+          if (totalCell) totalCell.style.paddingTop = '';
+          wrap.classList.remove('is-collapsed');
+          wrap.style.maxHeight = wrap.scrollHeight + 'px';
+          wrap.addEventListener('transitionend', function done(e) {
+            if (e.target !== wrap || e.propertyName !== 'max-height') return;
+            wrap.removeEventListener('transitionend', done);
+            if (!wrap.classList.contains('is-collapsed')) wrap.style.maxHeight = 'none';
+          });
+        }
+      }
+      wrap.style.maxHeight = layoutCollapsed() + 'px';
+
+      wrap.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
+        if (String(window.getSelection() || '')) return;
+        setCollapsed(!wrap.classList.contains('is-collapsed'));
+      });
+      wrap.addEventListener('keydown', (e) => {
+        if (e.target !== wrap || (e.key !== 'Enter' && e.key !== ' ')) return;
+        e.preventDefault();
+        setCollapsed(!wrap.classList.contains('is-collapsed'));
+      });
+      window.addEventListener('resize', () => {
+        if (wrap.classList.contains('is-collapsed')) wrap.style.maxHeight = layoutCollapsed() + 'px';
+      });
+    }
+
     async function loadReleases() {
       const body = document.getElementById('release-body');
       try {
@@ -786,7 +884,7 @@
         body.innerHTML = list.map((r, index) => {
           const sha = String(r.sha256 || '').slice(0, 16);
           const totalCell = index === 0
-            ? `<td rowspan="${list.length}" style="text-align: center; vertical-align: middle;"><strong>${totalCount}</strong></td>`
+            ? `<td rowspan="${list.length}" class="total-cell"><strong>${totalCount}</strong></td>`
             : '';
           return `
             <tr>
@@ -799,6 +897,7 @@
             </tr>
           `;
         }).join('');
+        initReleaseCollapse();
       } catch (err) {
         renderFeatureList('');
         body.innerHTML = `<tr><td colspan="6" class="muted">releases.json の取得に失敗しました: ${escapeHtml(String(err))}</td></tr>`;
