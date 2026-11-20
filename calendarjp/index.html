@@ -307,17 +307,36 @@
       padding: 10px 14px;
       font-size: 14px;
       font-weight: 700;
+      font-family: inherit;
+      line-height: 1.2;
+      text-decoration: none;
       cursor: pointer;
     }
     .feature-toggle-btn:hover {
       border-color: var(--accent);
       color: #ffffff;
     }
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    /* スクリーンショットの ‹ › と同じ細い矢印。閉じているときは下向き、開くと上向き */
     .feature-toggle-btn .arrow {
+      display: inline-block;
+      width: 12px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 300;
+      line-height: 14px;
+      transform: rotate(90deg);
       transition: transform 0.18s ease;
     }
+    .feature-toggle-btn .arrow-right {
+      transform: none;
+    }
     .feature-toggle-btn[aria-expanded="true"] .arrow {
-      transform: rotate(180deg);
+      transform: rotate(-90deg);
     }
     .feature-panel {
       margin-top: 10px;
@@ -418,18 +437,13 @@
     }
     .links a:hover { text-decoration: underline; }
     .muted { color: var(--muted); }
-    .guide { padding: 20px 22px; }
-    .guide summary { cursor: pointer; color: var(--muted); }
-    .guide summary h2 { display: inline; margin: 0; font-size: 16px; color: var(--fg); }
-    .guide[open] summary { margin-bottom: 12px; }
-    .guide summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
-    .guide h3 { margin: 18px 0 6px; font-size: 14px; }
-    .guide p, .guide li { font-size: 14px; line-height: 1.8; color: var(--fg); }
-    .guide p { margin: 0 0 8px; }
-    .guide ol { margin: 0; padding-left: 22px; }
-    .guide dl { margin: 0; }
-    .guide dt { margin-top: 12px; font-size: 14px; font-weight: 700; }
-    .guide dd { margin: 4px 0 0; font-size: 14px; line-height: 1.8; color: var(--muted); }
+    .guide-panel h3 { margin: 18px 0 6px; font-size: 14px; }
+    .guide-panel p, .guide-panel li { font-size: 14px; line-height: 1.8; color: var(--fg); }
+    .guide-panel p { margin: 0 0 8px; }
+    .guide-panel ol { margin: 0; padding-left: 22px; }
+    .guide-panel dl { margin: 0; }
+    .guide-panel dt { margin-top: 12px; font-size: 14px; font-weight: 700; }
+    .guide-panel dd { margin: 4px 0 0; font-size: 14px; line-height: 1.8; color: var(--muted); }
     @media (max-width: 720px) {
       th:nth-child(5), td:nth-child(5), th:nth-child(6), td:nth-child(6) {
         display: none;
@@ -474,19 +488,54 @@
         </p>
       </div>
       <div class="feature-wrap">
-        <button
-          id="feature-toggle-btn"
-          class="feature-toggle-btn"
-          type="button"
-          aria-expanded="false"
-          aria-controls="feature-panel"
-        >
-          <span class="arrow">&#9660;</span>
-          <span>機能一覧</span>
-        </button>
+        <div class="hero-buttons">
+          <button id="feature-toggle-btn" class="feature-toggle-btn" type="button" aria-expanded="false" aria-controls="feature-panel">
+            <span class="arrow">&#8250;</span>
+            <span>機能一覧</span>
+          </button>
+          <button id="guide-toggle-btn" class="feature-toggle-btn" type="button" aria-expanded="false" aria-controls="guide-panel">
+            <span class="arrow">&#8250;</span>
+            <span>使い方・よくある質問</span>
+          </button>
+          <a class="feature-toggle-btn" href="./history.html">
+            <span>更新履歴</span>
+            <span class="arrow arrow-right">&#8250;</span>
+          </a>
+        </div>
         <div id="feature-panel" class="feature-panel" hidden>
           <h2 id="feature-title" class="feature-title">最新機能一覧</h2>
           <div id="feature-sections"></div>
+        </div>
+        <div id="guide-panel" class="feature-panel guide-panel" hidden>
+          <h2 id="guide-h" class="feature-title">Windows のカレンダーで祝日表示をする方法・よくある質問</h2>
+          <p>Windows 11 のパソコンで、画面右下（タスクバー）の時計をクリックすると出る純正カレンダーには、日本の祝日が表示されません。CalendarJP を入れると、同じ時計クリックで祝日表示つきのカレンダーが開くようになります。Windows の設定を変える必要はありません。</p>
+          <h3>Windows 11 のカレンダーに祝日を表示する手順</h3>
+          <ol>
+            <li>下の表の「DL」から CalendarJPSetup.exe をダウンロードして実行します。</li>
+            <li>タスクバー右下の時計をクリックします。純正カレンダーの代わりに CalendarJP が開き、日本の祝日と振替休日が表示されます。</li>
+            <li>毎回使う場合は、タスクトレイのアイコンを右クリックして「スタートアップに登録」を選びます。</li>
+          </ol>
+          <h3>よくある質問</h3>
+          <dl>
+            <dt>無料で使えますか？</dt>
+            <dd>無料です。アカウント登録や API キーも要りません。</dd>
+            <dt>どの祝日が表示されますか？</dt>
+            <dd>日本の国民の祝日、振替休日、国民の休日です。春分の日と秋分の日にも対応しています。</dd>
+            <dt>祝日はどんな色で表示されますか？</dt>
+            <dd>祝日と振替休日は、日曜日と同じ赤色で表示されます。平日にある祝日もひと目で分かります。背景色やアクセント色、セルの形は設定で変えられます。</dd>
+            <dt>Windows 11 のカレンダーアプリとして、ほかのアプリと何が違いますか？</dt>
+            <dd>別のウィンドウを開くアプリではなく、タスクバーの時計をクリックしたときのカレンダーそのものを置き換えます。いつもの操作のまま、祝日・天気・予定を確認できます。</dd>
+            <dt>安全に使えますか？</dt>
+            <dd>インストーラーの SHA-256 を下の表で公開しているので、ダウンロードしたファイルが同じものか確認できます。コード署名をしていないため、初回の実行時に SmartScreen の警告が出ることがあります（ページ上部の「SmartScreen警告が出る場合」をご覧ください）。</dd>
+            <dt>純正の Windows カレンダーに戻せますか？</dt>
+            <dd>タスクトレイのアイコンを右クリックして「終了」を選ぶと、純正のカレンダーに戻ります。アンインストールは Windows の「インストールされているアプリ」からできます。</dd>
+            <dt>パソコンで地震速報の通知を受け取れますか？</dt>
+            <dd>v1.6.0 から対応しています。設定した地域で震度4（変更できます）以上の揺れが見込まれるとき、緊急地震速報をアラート音・ポップアップ・音声で知らせます。</dd>
+            <dt>祝日のほかに何が表示されますか？</dt>
+            <dd>天気と気温、Google カレンダーの予定（iCal URL）を同じ画面に表示できます。v1.6.0 からは地震速報と週間天気・警報・注意報にも対応しています。</dd>
+            <dt>動作に必要なものは？</dt>
+            <dd>Windows 11（64ビット）と .NET 9 ランタイムです。Windows 10 でも動作しますが、時計クリックの検出範囲が異なる場合があります。</dd>
+          </dl>
         </div>
       </div>
     </section>
@@ -510,43 +559,6 @@
       </table>
       <div class="release-shade" id="release-shade"></div>
       <div class="release-frame" id="release-frame"></div>
-    </section>
-
-    <details class="card guide">
-      <summary><h2 id="guide-h">Windows のカレンダーで祝日表示をする方法・よくある質問</h2></summary>
-      <p>Windows 11 のパソコンで、画面右下（タスクバー）の時計をクリックすると出る純正カレンダーには、日本の祝日が表示されません。CalendarJP を入れると、同じ時計クリックで祝日表示つきのカレンダーが開くようになります。Windows の設定を変える必要はありません。</p>
-      <h3>Windows 11 のカレンダーに祝日を表示する手順</h3>
-      <ol>
-        <li>上の表の「DL」から CalendarJPSetup.exe をダウンロードして実行します。</li>
-        <li>タスクバー右下の時計をクリックします。純正カレンダーの代わりに CalendarJP が開き、日本の祝日と振替休日が表示されます。</li>
-        <li>毎回使う場合は、タスクトレイのアイコンを右クリックして「スタートアップに登録」を選びます。</li>
-      </ol>
-      <h3>よくある質問</h3>
-      <dl>
-        <dt>無料で使えますか？</dt>
-        <dd>無料です。アカウント登録や API キーも要りません。</dd>
-        <dt>どの祝日が表示されますか？</dt>
-        <dd>日本の国民の祝日、振替休日、国民の休日です。春分の日と秋分の日にも対応しています。</dd>
-        <dt>祝日はどんな色で表示されますか？</dt>
-        <dd>祝日と振替休日は、日曜日と同じ赤色で表示されます。平日にある祝日もひと目で分かります。背景色やアクセント色、セルの形は設定で変えられます。</dd>
-        <dt>Windows 11 のカレンダーアプリとして、ほかのアプリと何が違いますか？</dt>
-        <dd>別のウィンドウを開くアプリではなく、タスクバーの時計をクリックしたときのカレンダーそのものを置き換えます。いつもの操作のまま、祝日・天気・予定を確認できます。</dd>
-        <dt>安全に使えますか？</dt>
-        <dd>インストーラーの SHA-256 を上の表で公開しているので、ダウンロードしたファイルが同じものか確認できます。コード署名をしていないため、初回の実行時に SmartScreen の警告が出ることがあります（ページ上部の「SmartScreen警告が出る場合」をご覧ください）。</dd>
-        <dt>純正の Windows カレンダーに戻せますか？</dt>
-        <dd>タスクトレイのアイコンを右クリックして「終了」を選ぶと、純正のカレンダーに戻ります。アンインストールは Windows の「インストールされているアプリ」からできます。</dd>
-        <dt>パソコンで地震速報の通知を受け取れますか？</dt>
-        <dd>v1.6.0 から対応しています。設定した地域で震度4（変更できます）以上の揺れが見込まれるとき、緊急地震速報をアラート音・ポップアップ・音声で知らせます。</dd>
-        <dt>祝日のほかに何が表示されますか？</dt>
-        <dd>天気と気温、Google カレンダーの予定（iCal URL）を同じ画面に表示できます。v1.6.0 からは地震速報と週間天気・警報・注意報にも対応しています。</dd>
-        <dt>動作に必要なものは？</dt>
-        <dd>Windows 11（64ビット）と .NET 9 ランタイムです。Windows 10 でも動作しますが、時計クリックの検出範囲が異なる場合があります。</dd>
-      </dl>
-    </details>
-
-    <section class="card" style="padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
-      <span style="font-size: 15px; font-weight: 700;">更新履歴</span>
-      <a class="btn" href="./history.html">全バージョンの更新履歴を見る</a>
     </section>
   </main>
 
@@ -761,14 +773,20 @@
       }).join('');
     }
 
+    // 機能一覧と使い方・よくある質問は、片方を開くともう片方を閉じる
     function initFeatureToggle() {
-      const btn = document.getElementById('feature-toggle-btn');
-      const panel = document.getElementById('feature-panel');
-      if (!btn || !panel) return;
-      btn.addEventListener('click', () => {
-        const next = btn.getAttribute('aria-expanded') !== 'true';
-        btn.setAttribute('aria-expanded', String(next));
-        panel.hidden = !next;
+      const pairs = ['feature', 'guide']
+        .map(name => [document.getElementById(name + '-toggle-btn'), document.getElementById(name + '-panel')])
+        .filter(([btn, panel]) => btn && panel);
+      pairs.forEach(([btn]) => {
+        btn.addEventListener('click', () => {
+          const next = btn.getAttribute('aria-expanded') !== 'true';
+          pairs.forEach(([b, p]) => {
+            const open = next && b === btn;
+            b.setAttribute('aria-expanded', String(open));
+            p.hidden = !open;
+          });
+        });
       });
     }
 
