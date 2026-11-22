@@ -205,6 +205,25 @@
       max-width: 64ch;
     }
     .opinion-lead a { color: var(--accent); }
+    .support-band {
+      border: 1px solid color-mix(in srgb, #ffb454 35%, var(--line));
+      background: color-mix(in srgb, #ffb454 6%, transparent);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .support-title { margin: 0; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .support-band .opinion-lead { font-size: 12.5px; }
+    .support-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .support-band .btn { font-size: 13px; padding: 8px 14px; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn.ghost { background: transparent; }
+    .btn.ghost:hover { border-color: var(--accent); }
+    .btn.gift { background: #ffb454; border-color: #ffb454; color: #1a1200; }
+    .btn.gift:hover { filter: brightness(1.08); }
+    .support-copied { font-size: 12px; color: #7ee2a8; }
+    .support-addr { font-family: Consolas, monospace; font-size: 13px; user-select: all; }
     .btn {
       font: inherit;
       font-size: 14px;
@@ -426,7 +445,7 @@
         <h2 id="opinion-h">
           <button class="opinion-toggle" id="opinion-toggle" type="button" aria-expanded="true" aria-controls="opinion-panel">
             <span class="opinion-arrow" aria-hidden="true">&#9660;</span>
-            <span>意見・要望はこちら</span>
+            <span>意見・要望・支援はこちら</span>
             <span class="opinion-badge" id="opinion-badge" hidden></span>
           </button>
         </h2>
@@ -436,6 +455,15 @@
         <p class="opinion-lead">
           不具合の報告や要望をお寄せください。書いた内容はあなたと開発者にしか見えません。
         </p>
+        <div class="support-band">
+          <p class="support-title"><span aria-hidden="true">&#127873;</span>開発を応援する</p>
+          <p class="opinion-lead">アプリを気に入っていただけたら、コーヒー代を支援していただけると開発者が喜びます！</p>
+          <div class="support-row">
+            <button class="btn ghost" id="support-copy" type="button">宛先をコピー</button>
+            <a class="btn gift" href="https://www.amazon.co.jp/dp/B004N3APGO?th=1&amp;gpo=500" target="_blank" rel="noopener">Amazonギフト券を贈る &#8599;</a>
+            <span class="support-copied" id="support-copied" role="status" hidden></span>
+          </div>
+        </div>
         <div id="opinion-body">
           <noscript><p class="opinion-status">意見・要望を送るには JavaScript を有効にしてください。</p></noscript>
         </div>
@@ -459,6 +487,35 @@
           var open = btn.getAttribute('aria-expanded') !== 'true';
           set(open);
           try { localStorage.setItem(KEY, open ? '1' : '0'); } catch (e) {}
+        });
+      })();
+      // ギフト券の宛先は、ボットに拾われないよう HTML に書かず、押したときに組み立ててコピーする
+      (function () {
+        var btn = document.getElementById('support-copy');
+        var msg = document.getElementById('support-copied');
+        if (!btn || !msg) return;
+        var timer = 0;
+        btn.addEventListener('click', function () {
+          var addr = ['regainlife', 'gift'].join('.') + String.fromCharCode(64) + ['outlook', 'com'].join('.');
+          function show(ok) {
+            clearTimeout(timer);
+            if (ok) {
+              msg.textContent = '✅️ コピーしました。ギフト受け取り専用アドレスです。ご意見・ご要望は届きません';
+              msg.hidden = false;
+              timer = setTimeout(function () { msg.hidden = true; }, 6000);
+            } else {
+              msg.textContent = '';
+              var s = document.createElement('span');
+              s.className = 'support-addr';
+              s.textContent = addr;
+              msg.appendChild(s);
+              msg.appendChild(document.createTextNode('（ギフト受け取り専用アドレスです。ご意見・ご要望は届きません）'));
+              msg.hidden = false;
+            }
+          }
+          try {
+            navigator.clipboard.writeText(addr).then(function () { show(true); }, function () { show(false); });
+          } catch (e) { show(false); }
         });
       })();
     </script>
