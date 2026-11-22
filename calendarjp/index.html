@@ -335,6 +335,39 @@
     .feature-toggle-btn[aria-expanded="true"] .arrow {
       transform: rotate(-90deg);
     }
+    .support-band[hidden] { display: none; }
+    .support-band {
+      margin-top: 10px;
+      border: 1px solid color-mix(in srgb, #ffb454 35%, var(--line));
+      background: color-mix(in srgb, #ffb454 6%, transparent);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .support-title { margin: 0; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .support-lead { margin: 0; font-size: 12.5px; line-height: 1.75; color: var(--muted); }
+    .support-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .support-btn {
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--fg);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .support-btn:hover { border-color: #6ea8ff; }
+    .support-btn.gift { background: #ffb454; border-color: #ffb454; color: #1a1200; }
+    .support-btn.gift:hover { filter: brightness(1.08); }
+    .support-copied { font-size: 12px; color: #7ee2a8; }
+    .support-addr { font-family: Consolas, monospace; user-select: all; }
     .feature-panel {
       margin-top: 10px;
       border: 1px solid var(--line);
@@ -494,6 +527,10 @@
             <svg class="arrow" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2 L8.5 6 L4.5 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <span>使い方・よくある質問</span>
           </button>
+          <button id="coffee-toggle-btn" class="feature-toggle-btn" type="button" aria-expanded="false" aria-controls="coffee-panel">
+            <svg class="arrow" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2 L8.5 6 L4.5 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>コーヒー代をおごる</span>
+          </button>
           <a class="feature-toggle-btn" href="./history.html">
             <span>更新履歴</span>
             <svg class="arrow arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2 L8.5 6 L4.5 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -502,6 +539,15 @@
         <div id="feature-panel" class="feature-panel" hidden>
           <h2 id="feature-title" class="feature-title">最新機能一覧</h2>
           <div id="feature-sections"></div>
+        </div>
+        <div id="coffee-panel" class="support-band" hidden>
+          <p class="support-title"><span aria-hidden="true">&#127873;</span>開発を応援する</p>
+          <p class="support-lead">アプリを気に入っていただけたら、コーヒー代を支援していただけると開発者が喜びます！</p>
+          <div class="support-row">
+            <button class="support-btn" id="support-copy" type="button">宛先をコピー</button>
+            <a class="support-btn gift" href="https://www.amazon.co.jp/dp/B004N3APGO?th=1&amp;gpo=500" target="_blank" rel="noopener">Amazonギフト券を贈る &#8599;</a>
+            <span class="support-copied" id="support-copied" role="status" hidden></span>
+          </div>
         </div>
         <div id="guide-panel" class="feature-panel guide-panel" hidden>
           <h2 id="guide-h" class="feature-title">Windows のカレンダーで祝日表示をする方法・よくある質問</h2>
@@ -772,7 +818,7 @@
 
     // 機能一覧と使い方・よくある質問は、片方を開くともう片方を閉じる
     function initFeatureToggle() {
-      const pairs = ['feature', 'guide']
+      const pairs = ['feature', 'guide', 'coffee']
         .map(name => [document.getElementById(name + '-toggle-btn'), document.getElementById(name + '-panel')])
         .filter(([btn, panel]) => btn && panel);
       pairs.forEach(([btn]) => {
@@ -784,6 +830,34 @@
             p.hidden = !open;
           });
         });
+      });
+    }
+
+    // ギフト券の宛先は、ボットに拾われないよう HTML に書かず、押したときに組み立ててコピーする
+    function initSupportCopy() {
+      const btn = document.getElementById('support-copy');
+      const msg = document.getElementById('support-copied');
+      if (!btn || !msg) return;
+      let timer = 0;
+      btn.addEventListener('click', () => {
+        const addr = ['regainlife', 'gift'].join('.') + String.fromCharCode(64) + ['outlook', 'com'].join('.');
+        const show = ok => {
+          clearTimeout(timer);
+          msg.textContent = '';
+          if (ok) {
+            msg.textContent = '✅️ コピーしました。ギフト受け取り専用アドレスです。ご意見・ご要望は届きません';
+            timer = setTimeout(() => { msg.hidden = true; }, 6000);
+          } else {
+            const s = document.createElement('span');
+            s.className = 'support-addr';
+            s.textContent = addr;
+            msg.append(s, '（ギフト受け取り専用アドレスです。ご意見・ご要望は届きません）');
+          }
+          msg.hidden = false;
+        };
+        try {
+          navigator.clipboard.writeText(addr).then(() => show(true), () => show(false));
+        } catch (e) { show(false); }
       });
     }
 
@@ -920,6 +994,7 @@
     }
 
     initFeatureToggle();
+    initSupportCopy();
     initSmartScreenHelp();
     loadReleases();
   </script>
